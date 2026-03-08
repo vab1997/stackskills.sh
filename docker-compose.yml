@@ -1,0 +1,17 @@
+services:
+  stackskill-db:
+    image: postgres:16.2-alpine3.19
+    container_name: stackskill
+    environment:
+      POSTGRES_DB: stackskill
+      POSTGRES_USER: stackskill
+      POSTGRES_PASSWORD: stackskilldb
+    ports:
+      - 5432:5432
+    volumes:
+      - stackskill-db:/var/lib/postgresql/data
+
+volumes:
+  stackskill-db:
+    name: stackskill-db
+    driver: local
