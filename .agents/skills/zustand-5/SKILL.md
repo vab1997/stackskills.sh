@@ -66,9 +66,9 @@ const useSettingsStore = create<SettingsStore>()(
       setLanguage: (language) => set({ language }),
     }),
     {
-      name: "settings-storage",  // localStorage key
-    }
-  )
+      name: "settings-storage", // localStorage key
+    },
+  ),
 );
 ```
 
@@ -149,9 +149,10 @@ interface CartSlice {
 const createCartSlice = (set): CartSlice => ({
   items: [],
   addItem: (item) => set((state) => ({ items: [...state.items, item] })),
-  removeItem: (id) => set((state) => ({
-    items: state.items.filter(i => i.id !== id)
-  })),
+  removeItem: (id) =>
+    set((state) => ({
+      items: state.items.filter((i) => i.id !== id),
+    })),
 });
 
 // store.ts
@@ -179,16 +180,18 @@ const useTodoStore = create<TodoStore>()(
   immer((set) => ({
     todos: [],
 
-    addTodo: (text) => set((state) => {
-      // Mutate directly with Immer!
-      state.todos.push({ id: crypto.randomUUID(), text, done: false });
-    }),
+    addTodo: (text) =>
+      set((state) => {
+        // Mutate directly with Immer!
+        state.todos.push({ id: crypto.randomUUID(), text, done: false });
+      }),
 
-    toggleTodo: (id) => set((state) => {
-      const todo = state.todos.find(t => t.id === id);
-      if (todo) todo.done = !todo.done;
-    }),
-  }))
+    toggleTodo: (id) =>
+      set((state) => {
+        const todo = state.todos.find((t) => t.id === id);
+        if (todo) todo.done = !todo.done;
+      }),
+  })),
 );
 ```
 
@@ -203,8 +206,8 @@ const useStore = create<Store>()(
     (set) => ({
       // store definition
     }),
-    { name: "MyStore" }  // Name in Redux DevTools
-  )
+    { name: "MyStore" }, // Name in Redux DevTools
+  ),
 );
 ```
 
@@ -216,7 +219,7 @@ const { count, increment } = useCounterStore.getState();
 increment();
 
 // Subscribe to changes
-const unsubscribe = useCounterStore.subscribe(
-  (state) => console.log("Count changed:", state.count)
+const unsubscribe = useCounterStore.subscribe((state) =>
+  console.log("Count changed:", state.count),
 );
 ```
