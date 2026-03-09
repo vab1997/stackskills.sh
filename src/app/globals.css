@@ -10,9 +10,11 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
+  --font-inter: var(--font-inter);
+  --font-geist-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --font-jersey-25: "Jersey 25", cursive;
-  --font-jersey-15: "Jersey 15", cursive;
+  --font-jersey-25: var(--font-jersey-25);
+  --font-jersey-15: var(--font-jersey-15);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
