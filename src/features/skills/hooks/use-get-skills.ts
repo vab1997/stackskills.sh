@@ -7,9 +7,7 @@ export function useGetSkills() {
     isExecuting: isExecutingGetSkills,
     result: resultGetSkills,
   } = useSafeAction(getSkillsAction, {
-    loadingText: () => "Getting skills...",
-    successText: () => "Skills fetched successfully",
-    errorText: (error) => error.message,
+    showToast: false,
   });
 
   const fetchSkills = async (packageJsons: string[]) => {

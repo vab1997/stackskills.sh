@@ -53,7 +53,8 @@ const formatValidationErrors = (root: unknown): string | null => {
 export const useSafeAction = <ServerError, CVE, Data>(
   safeActionFn: HookSafeActionFn<ServerError, any, CVE, Data>,
   toastCopy: {
-    loadingText: (input: unknown) => string;
+    showToast?: boolean;
+    loadingText?: (input: unknown) => string;
     successText?: (data?: Data) => string;
     errorText?: (error: {
       id: number;
@@ -73,11 +74,13 @@ export const useSafeAction = <ServerError, CVE, Data>(
   type OnNavigationType = NonNullable<typeof utils.onNavigation>;
 
   const onExecute: OnExecuteType = (args) => {
+    if (toastCopy.showToast === false) return;
     toast.dismiss();
-    toast.loading(toastCopy.loadingText(args.input));
+    toast.loading(toastCopy.loadingText?.(args.input) ?? "Loading");
   };
 
   const onSuccess: OnSuccessType = (args) => {
+    if (toastCopy.showToast === false) return;
     toast.dismiss();
     if (toastCopy.successText) {
       toast.success(toastCopy.successText(args.data));
@@ -85,6 +88,7 @@ export const useSafeAction = <ServerError, CVE, Data>(
   };
 
   const onNavigation: OnNavigationType = () => {
+    if (toastCopy.showToast === false) return;
     toast.dismiss();
     if (toastCopy.successText) {
       toast.success(toastCopy.successText());
@@ -93,6 +97,7 @@ export const useSafeAction = <ServerError, CVE, Data>(
 
   const onError: OnErrorType = ({ error }) => {
     console.error(error);
+    if (toastCopy.showToast === false) return;
     let errorMessage = "Please try again later";
     if (typeof error.serverError === "string") {
       errorMessage = error.serverError;

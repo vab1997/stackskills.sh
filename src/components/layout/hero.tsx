@@ -1,3 +1,5 @@
+import { AnimatedShinyText } from "../ui/animated-shiny-text";
+
 export function Hero() {
   return (
     <div className="mx-auto my-4 grid w-full max-w-6xl grid-cols-1 items-start gap-10 sm:my-5 lg:my-7 lg:grid-cols-[auto_1fr] lg:gap-14">
@@ -20,7 +22,9 @@ export function Hero() {
         </div>
 
         <p className="text-primary text-center font-mono text-[15px] font-medium tracking-tight uppercase lg:text-left lg:text-[19px]">
-          Helps you explore the stack of a repository
+          <AnimatedShinyText>
+            Helps you explore the stack of a repository
+          </AnimatedShinyText>
         </p>
       </div>
 

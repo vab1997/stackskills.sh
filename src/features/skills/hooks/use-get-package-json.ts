@@ -7,9 +7,7 @@ export function useGetPackagejson() {
     isExecuting: isExecutingGetPackageJson,
     result: resultGetPackageJson,
   } = useSafeAction(getPackageJsonFromGithubAction, {
-    loadingText: () => "Getting package.json...",
-    successText: () => "Package.json fetched successfully",
-    errorText: (error: { message: string }) => error.message,
+    showToast: false,
   });
 
   const fetchPackageJson = async ({

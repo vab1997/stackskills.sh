@@ -11,11 +11,7 @@ export function useGetRepositories({
     executeAsync: executeGetRepositories,
     isExecuting: isExecutingGetRepositories,
     result: resultGetRepositories,
-  } = useSafeAction(getRepositoriesAction, {
-    loadingText: () => "Getting repositories...",
-    successText: () => "Repositories fetched successfully",
-    errorText: (error) => error.message,
-  });
+  } = useSafeAction(getRepositoriesAction, { showToast: false });
 
   useEffect(() => {
     if (hasRepoAccess) {

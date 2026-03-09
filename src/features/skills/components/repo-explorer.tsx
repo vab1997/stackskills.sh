@@ -11,6 +11,7 @@ import {
   Search,
   Sparkles,
   XCircle,
+  Zap,
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -129,6 +130,14 @@ export function RepoExplorer({ hasRepoAccess }: { hasRepoAccess: boolean }) {
             </p>
           </div>
         </div>
+
+        {currentStep === 0 && (
+          <div className="text-muted-foreground flex flex-col items-center justify-center py-12">
+            <Package className="mb-3 size-8 opacity-40" />
+            <p className="text-sm">Waiting for dependencies input...</p>
+          </div>
+        )}
+
         {isExecutingGetSkills ? (
           <div className="flex items-center gap-2 text-white/60">
             <Loader2 className="size-5 animate-spin duration-150" />
@@ -198,7 +207,14 @@ export function RepoExplorer({ hasRepoAccess }: { hasRepoAccess: boolean }) {
             </p>
           </div>
         </div>
-        {skills ? <SkillDisplay skills={skills} /> : null}
+        {skills ? (
+          <SkillDisplay skills={skills} />
+        ) : (
+          <div className="text-muted-foreground flex flex-col items-center justify-center py-12">
+            <Zap className="mb-3 size-8 opacity-40" />
+            <p className="text-sm">Skills will appear after analysis...</p>
+          </div>
+        )}
       </section>
     </div>
   );
