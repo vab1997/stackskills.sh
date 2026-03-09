@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "skills": {
+    "nextjs-caching": {
+      "source": "goncy/skills",
+      "sourceType": "github",
+      "computedHash": "81c9cac9b3326acdb716212dc646bc590575f0a73e36f610fd6b34a016b5d0e1"
+    },
+    "nextjs-rendering": {
+      "source": "goncy/skills",
+      "sourceType": "github",
+      "computedHash": "18f973dea2b8a783ec6f6d5d50a16973d65406ce1d380929c0822c0fc8d28451"
+    }
+  }
+}

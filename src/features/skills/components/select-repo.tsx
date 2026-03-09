@@ -6,13 +6,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { requestRepoAccess } from "@/features/skills/queries";
 import { Github, Loader2, Package } from "lucide-react";
 import { useState } from "react";
 import ShikiHighlighter from "react-shiki";
 import { toast } from "sonner";
 import { useGetPackagejson } from "../hooks/use-get-package-json";
 import { useGetRepositories } from "../hooks/use-get-repositories";
+import { useRequestRepoAccess } from "../hooks/use-request-repo-access";
 
 export function SelectRepo({
   hasRepoAccess,
@@ -28,6 +28,8 @@ export function SelectRepo({
     useGetRepositories({ hasRepoAccess });
   const { fetchPackageJson, isExecutingGetPackageJson, resultGetPackageJson } =
     useGetPackagejson();
+  const { requestRepoAccess, isExecutingRequestRepoAccess } =
+    useRequestRepoAccess();
 
   const handleSelectedRepo = async (value: string) => {
     try {
@@ -87,9 +89,19 @@ export function SelectRepo({
           variant="outline"
           size="icon"
           className="w-fit gap-1 px-2 active:scale-[0.97]"
+          disabled={isExecutingRequestRepoAccess}
         >
-          <Github className="size-4" />
-          Connect GitHub Repositories
+          {isExecutingRequestRepoAccess ? (
+            <>
+              <Loader2 className="size-4 animate-spin" />
+              Connecting GitHub Repositories...
+            </>
+          ) : (
+            <>
+              <Github className="size-4" />
+              Connect GitHub Repositories
+            </>
+          )}
         </Button>
       )}
 

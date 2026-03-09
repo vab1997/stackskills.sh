@@ -18,7 +18,8 @@
     "db:studio": "drizzle-kit studio",
     "db:reset": "pnpm run db:down && docker volume rm stackskill-db && pnpm run db:up",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "vercel:build": "pnpm db:check && pnpm db:migrate && pnpm build"
   },
   "dependencies": {
     "@base-ui/react": "^1.2.0",
