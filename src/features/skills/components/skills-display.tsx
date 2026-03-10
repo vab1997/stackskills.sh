@@ -18,6 +18,7 @@ import {
   Copy,
   ExternalLink,
   Package,
+  Zap,
 } from "lucide-react";
 import { useState } from "react";
 import type { SkillsApiSkill, SkillsByDependency } from "../types";
@@ -161,11 +162,16 @@ export function SkillDisplay({ skills }: { skills: SkillsByDependency }) {
     <div className="mx-auto w-full">
       <div className="border-border overflow-hidden rounded-2xl border">
         <div className="divide-border/50 divide-y">
-          {Object.entries(skills).length > 0
-            ? Object.entries(skills).map(([key, value]) => (
-                <TechnologyRow key={key} name={key} skills={value} />
-              ))
-            : null}
+          {skills && Object.keys(skills).length > 0 ? (
+            Object.entries(skills).map(([key, value]) => (
+              <TechnologyRow key={key} name={key} skills={value} />
+            ))
+          ) : (
+            <div className="text-muted-foreground flex flex-col items-center justify-center py-10">
+              <Zap className="mb-3 size-8 opacity-40" />
+              <p className="text-sm">No skills found for your stack.</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

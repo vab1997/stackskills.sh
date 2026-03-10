@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useGetSkills } from "@/features/skills/hooks/use-get-skills";
 import { cn } from "@/lib/utils";
 import {
+  AlertCircle,
   CheckCircle2,
   Loader2,
   Package,
@@ -34,6 +35,11 @@ export function RepoExplorer({ hasRepoAccess }: { hasRepoAccess: boolean }) {
     isExecutingGetSkills,
     resultGetSkills: skills,
   } = useGetSkills();
+
+  const handleReset = () => {
+    setCurrentStep(0);
+    setLastPackageJsons([]);
+  };
 
   const handleGetSkills = async ({
     packageJsonFromRepository,
@@ -161,6 +167,28 @@ export function RepoExplorer({ hasRepoAccess }: { hasRepoAccess: boolean }) {
               Try again
             </Button>
           </div>
+        ) : currentStep > 1 && skills && Object.keys(skills).length === 0 ? (
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center gap-2 text-yellow-500">
+              <AlertCircle className="h-4 w-4" />
+              <span className="text-sm font-medium">
+                No technologies identified
+              </span>
+            </div>
+            <p className="text-muted-foreground text-xs">
+              No stack-defining technologies were found in your dependencies.
+              The packages may be utility tools without a dedicated Claude skill
+              catalog.
+            </p>
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-fit"
+              onClick={handleReset}
+            >
+              Start over
+            </Button>
+          </div>
         ) : currentStep > 1 && skills && Object.keys(skills).length > 0 ? (
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-2 text-green-500">
@@ -207,7 +235,7 @@ export function RepoExplorer({ hasRepoAccess }: { hasRepoAccess: boolean }) {
             </p>
           </div>
         </div>
-        {skills ? (
+        {skills && Object.keys(skills).length > 0 ? (
           <SkillDisplay skills={skills} />
         ) : (
           <div className="text-muted-foreground flex flex-col items-center justify-center py-12">
