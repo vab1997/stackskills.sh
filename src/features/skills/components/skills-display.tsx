@@ -163,7 +163,7 @@ function TechnologyRow({
 export function SkillDisplay({ skills }: { skills: SkillsByDependency }) {
   return (
     <div className="mx-auto w-full">
-      <div className="border-border overflow-hidden rounded-2xl border">
+      <div className="border-border overflow-hidden rounded-lg border">
         <div className="divide-border/50 divide-y">
           {Object.keys(skills).length > 0 ? (
             Object.entries(skills).map(([key, value]) => (

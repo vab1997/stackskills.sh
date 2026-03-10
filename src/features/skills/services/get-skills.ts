@@ -248,7 +248,6 @@ async function identifyTechnologies(
       );
       return [...new Set(verified.map((t) => t.key))];
     } catch (error) {
-      logger.error({ error }, "Error identifying technologies");
       lastError = error;
       if (isModelFallbackError(error)) {
         logger.warn(
@@ -283,7 +282,6 @@ async function getSkillsFromPackageJson({
   if (technologies.length === 0) return {};
   return searchSkillsService({
     dependencies: technologies,
-    maxResultsPerDep: 5,
   });
 }
 
@@ -292,8 +290,6 @@ const discoverSkillsFromDependencies = async ({
 }: {
   packageJsons: string[];
 }): Promise<SkillsByDependency> => {
-  logger.info({ count: packageJsons.length }, "getSkills called");
-
   if (!Array.isArray(packageJsons) || packageJsons.length === 0) {
     return {};
   }
@@ -310,7 +306,6 @@ const discoverSkillsFromDependencies = async ({
       continue;
     }
   }
-  logger.debug({ mergedDeps, mergedDevDeps }, "Merged dependencies");
 
   const skills = await getSkillsFromPackageJson({
     dependencies: mergedDeps,

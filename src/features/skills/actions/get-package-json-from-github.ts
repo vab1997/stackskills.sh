@@ -6,14 +6,14 @@ import { GITHUB_API_URL } from "@/lib/constants";
 import { actionClient } from "@/lib/safe-action";
 import z from "zod";
 
+const repoSchema = z.object({
+  owner: z.string(),
+  repo: z.string(),
+  path: z.string(),
+});
+
 export const getPackageJsonFromGithubAction = actionClient
-  .inputSchema(
-    z.object({
-      owner: z.string(),
-      repo: z.string(),
-      path: z.string(),
-    }),
-  )
+  .inputSchema(repoSchema)
   .action(async ({ parsedInput }) => {
     const { owner, repo, path } = parsedInput;
     const session = await getSessionUser();
