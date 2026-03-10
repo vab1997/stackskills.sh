@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { FileJson, Plus, X } from "lucide-react";
-import { Fragment, useState } from "react";
+import { Fragment, useRef, useState } from "react";
 import z from "zod";
 
 const depsSchema = z.record(z.string(), z.string());
@@ -48,49 +48,45 @@ export function TextAreaInput({
     packageJsonFromPaste: string[];
   }) => void;
 }) {
-  const [manualPackageJsons, setManualPackageJsons] = useState<string[]>([""]);
-  const [errors, setErrors] = useState<(string | null)[]>([null]);
+  const nextId = useRef(1);
+  const [entries, setEntries] = useState<{ id: number; value: string }[]>([
+    { id: 0, value: "" },
+  ]);
+  const [errors, setErrors] = useState<Record<number, string | null>>({});
 
   const addPackageJson = () => {
-    setManualPackageJsons((prev) => [...prev, ""]);
-    setErrors((prev) => [...prev, null]);
+    const id = nextId.current++;
+    setEntries((prev) => [...prev, { id, value: "" }]);
   };
 
-  const removePackageJson = (index: number) => {
-    setManualPackageJsons((prev) => prev.filter((_, i) => i !== index));
-    setErrors((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const updatePackageJson = (index: number, value: string) => {
-    setManualPackageJsons((prev) => {
-      const next = [...prev];
-      next[index] = value;
-      return next;
-    });
+  const removePackageJson = (id: number) => {
+    setEntries((prev) => prev.filter((e) => e.id !== id));
     setErrors((prev) => {
-      const next = [...prev];
-      next[index] = null;
+      const next = { ...prev };
+      delete next[id];
       return next;
     });
   };
 
-  const handleBlur = (index: number) => {
-    const error = validatePackageJson(manualPackageJsons[index]);
-    setErrors((prev) => {
-      const next = [...prev];
-      next[index] = error;
-      return next;
-    });
+  const updatePackageJson = (id: number, value: string) => {
+    setEntries((prev) => prev.map((e) => (e.id === id ? { ...e, value } : e)));
+    setErrors((prev) => ({ ...prev, [id]: null }));
+  };
+
+  const handleBlur = (id: number, value: string) => {
+    setErrors((prev) => ({ ...prev, [id]: validatePackageJson(value) }));
   };
 
   const handleSubmit = () => {
-    const filled = manualPackageJsons.filter((p) => p.trim());
-    const newErrors = filled.map(validatePackageJson);
+    const filled = entries.filter((e) => e.value.trim());
+    const newErrors = Object.fromEntries(
+      filled.map((e) => [e.id, validatePackageJson(e.value)]),
+    );
     setErrors(newErrors);
-    if (newErrors.some((e) => e !== null)) return;
+    if (Object.values(newErrors).some((e) => e !== null)) return;
 
     onSubmit({
-      packageJsonFromPaste: filled,
+      packageJsonFromPaste: filled.map((e) => e.value),
     });
   };
 
@@ -108,7 +104,7 @@ export function TextAreaInput({
           variant="outline"
           size="sm"
           onClick={addPackageJson}
-          disabled={disabledButtonAnalyze || manualPackageJsons.length >= 4}
+          disabled={disabledButtonAnalyze || entries.length >= 4}
           className="w-fit gap-2 border-dashed active:scale-[0.97]"
           type="button"
         >
@@ -117,12 +113,12 @@ export function TextAreaInput({
         </Button>
       </header>
       <div className="mb-4 flex flex-col gap-3">
-        {manualPackageJsons.map((pkg, index) => (
-          <Fragment key={index}>
+        {entries.map((entry, index) => (
+          <Fragment key={entry.id}>
             <div
               className={cn(
                 "group/card border-border bg-muted/30 overflow-hidden rounded-lg border transition-colors",
-                errors[index] ? "border-destructive" : "border-border",
+                errors[entry.id] ? "border-destructive" : "border-border",
               )}
             >
               <div
@@ -132,12 +128,11 @@ export function TextAreaInput({
               >
                 <span className="text-muted-foreground flex items-center gap-1.5 text-xs font-medium">
                   <FileJson className="size-3" />
-                  package.json{" "}
-                  {manualPackageJsons.length > 1 && `#${index + 1}`}
+                  package.json {entries.length > 1 && `#${index + 1}`}
                 </span>
-                {manualPackageJsons.length > 1 && (
+                {entries.length > 1 && (
                   <button
-                    onClick={() => removePackageJson(index)}
+                    onClick={() => removePackageJson(entry.id)}
                     className="text-muted-foreground hover:bg-destructive/15 hover:text-destructive -mr-1 flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs transition ease-in-out active:scale-[0.97]"
                     aria-label="Remove this package.json"
                   >
@@ -148,21 +143,23 @@ export function TextAreaInput({
               </div>
 
               <Textarea
-                id={`paste-package-json-${index}`}
+                id={`paste-package-json-${entry.id}`}
                 placeholder='{"dependencies": { "react": "^18.0.0", ... }}'
-                value={pkg}
-                onChange={(e) => updatePackageJson(index, e.target.value)}
-                onBlur={() => handleBlur(index)}
+                value={entry.value}
+                onChange={(e) => updatePackageJson(entry.id, e.target.value)}
+                onBlur={() => handleBlur(entry.id, entry.value)}
                 disabled={disabledButtonAnalyze}
-                aria-invalid={!!errors[index]}
-                aria-describedby={errors[index] ? `error-${index}` : undefined}
+                aria-invalid={!!errors[entry.id]}
+                aria-describedby={
+                  errors[entry.id] ? `error-${entry.id}` : undefined
+                }
                 className="bg-muted/50 max-h-56 min-h-28 overflow-y-auto rounded-t-none border-none font-mono text-sm"
               />
             </div>
 
-            {errors[index] && (
-              <p id={`error-${index}`} className="text-destructive text-xs">
-                {errors[index]}
+            {errors[entry.id] && (
+              <p id={`error-${entry.id}`} className="text-destructive text-xs">
+                {errors[entry.id]}
               </p>
             )}
           </Fragment>
@@ -173,7 +170,7 @@ export function TextAreaInput({
         variant="outline"
         onClick={handleSubmit}
         disabled={
-          !manualPackageJsons.some((p) => p.trim()) || !!disabledButtonAnalyze
+          !entries.some((e) => e.value.trim()) || !!disabledButtonAnalyze
         }
         className="w-full transition-[background-color,transform] active:scale-[0.99]"
         size="lg"

@@ -12,7 +12,6 @@ export const getSkillsAction = actionClient
     }),
   )
   .action(async ({ parsedInput }) => {
-    console.log("parsedInput", { parsedInput });
     try {
       const skills = await getSkillsService({
         packageJsons: parsedInput.packageJsons,

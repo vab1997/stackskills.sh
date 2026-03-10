@@ -9,6 +9,10 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import type {
+  SkillsApiSkill,
+  SkillsByDependency,
+} from "@/features/skills/types";
 import { cn } from "@/lib/utils";
 import {
   ArrowDownToLine,
@@ -21,7 +25,6 @@ import {
   Zap,
 } from "lucide-react";
 import { useState } from "react";
-import type { SkillsApiSkill, SkillsByDependency } from "../types";
 
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
@@ -162,7 +165,7 @@ export function SkillDisplay({ skills }: { skills: SkillsByDependency }) {
     <div className="mx-auto w-full">
       <div className="border-border overflow-hidden rounded-2xl border">
         <div className="divide-border/50 divide-y">
-          {skills && Object.keys(skills).length > 0 ? (
+          {Object.keys(skills).length > 0 ? (
             Object.entries(skills).map(([key, value]) => (
               <TechnologyRow key={key} name={key} skills={value} />
             ))

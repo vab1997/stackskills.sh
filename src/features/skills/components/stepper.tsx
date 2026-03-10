@@ -76,7 +76,7 @@ export function Stepper({ steps, currentStep, className }: StepperProps) {
                     className="absolute inset-x-0 top-0 origin-top bg-white"
                     style={{ height: "100%" }}
                     initial={{ scaleY: 0 }}
-                    animate={{ scaleY: currentStep >= 1 ? 1 : 0 }}
+                    animate={{ scaleY: currentStep > index ? 1 : 0 }}
                     transition={{ duration: 0.2, ease: "easeInOut" }}
                   />
                 </AnimatePresence>

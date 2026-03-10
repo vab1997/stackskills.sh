@@ -1,24 +1,15 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { AnalysisSectionBody } from "@/features/skills/components/analysis-section";
+import { DependencyInput } from "@/features/skills/components/dependency-input";
+import { SkillDisplay } from "@/features/skills/components/skills-display";
+import { Stepper } from "@/features/skills/components/stepper";
 import { useGetSkills } from "@/features/skills/hooks/use-get-skills";
 import { cn } from "@/lib/utils";
-import {
-  AlertCircle,
-  CheckCircle2,
-  Loader2,
-  Package,
-  Search,
-  Sparkles,
-  XCircle,
-  Zap,
-} from "lucide-react";
+import { Package, RotateCcw, Search, Sparkles, Zap } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { DependencyInput } from "./dependency-input";
-import { SkillDisplay } from "./skills-display";
-import { Stepper } from "./stepper";
 
 const STEPS = [
   { label: "Dependencies", description: "Add your source" },
@@ -26,12 +17,33 @@ const STEPS = [
   { label: "Skills", description: "Relevant skills" },
 ];
 
+function getAnalysisStatus({
+  isLoading,
+  hasError,
+  step,
+  skillCount,
+}: {
+  isLoading: boolean;
+  hasError: boolean;
+  step: number;
+  skillCount: number;
+}) {
+  if (step === 0) return "idle";
+  if (isLoading) return "loading";
+  if (hasError) return "error";
+  if (step > 1 && skillCount === 0) return "empty";
+  if (step > 1 && skillCount > 0) return "success";
+  return "idle";
+}
+
 export function RepoExplorer({ hasRepoAccess }: { hasRepoAccess: boolean }) {
   const [currentStep, setCurrentStep] = useState(0);
   const [lastPackageJsons, setLastPackageJsons] = useState<string[]>([]);
+  const [hasFetchError, setHasFetchError] = useState(false);
 
   const {
     fetchSkills,
+    resetSkills,
     isExecutingGetSkills,
     resultGetSkills: skills,
   } = useGetSkills();
@@ -39,6 +51,27 @@ export function RepoExplorer({ hasRepoAccess }: { hasRepoAccess: boolean }) {
   const handleReset = () => {
     setCurrentStep(0);
     setLastPackageJsons([]);
+    setHasFetchError(false);
+    resetSkills();
+  };
+
+  const runFetch = async (packageJsons: string[]) => {
+    setHasFetchError(false);
+    setCurrentStep(1);
+    await fetchSkills(packageJsons);
+    setCurrentStep(2);
+  };
+
+  const handleRetry = async () => {
+    try {
+      await runFetch(lastPackageJsons);
+    } catch {
+      setHasFetchError(true);
+      setCurrentStep(1);
+      toast.error("Something went wrong while analyzing your dependencies.", {
+        description: "Please try again.",
+      });
+    }
   };
 
   const handleGetSkills = async ({
@@ -63,10 +96,9 @@ export function RepoExplorer({ hasRepoAccess }: { hasRepoAccess: boolean }) {
 
     setLastPackageJsons(packageJsons);
     try {
-      setCurrentStep(1);
-      await fetchSkills(packageJsons);
-      setCurrentStep(2);
+      await runFetch(packageJsons);
     } catch {
+      setHasFetchError(true);
       setCurrentStep(1);
       toast.error("Something went wrong while analyzing your dependencies.", {
         description: "Please try again.",
@@ -74,45 +106,52 @@ export function RepoExplorer({ hasRepoAccess }: { hasRepoAccess: boolean }) {
     }
   };
 
+  const skillKeys = skills ? Object.keys(skills) : [];
+  const skillCount = skillKeys.length;
+
+  const analysisStatus = getAnalysisStatus({
+    isLoading: isExecutingGetSkills,
+    hasError: hasFetchError,
+    step: currentStep,
+    skillCount,
+  });
+
   return (
     <div className="mt-6 flex w-full flex-1 flex-col gap-8">
       <div className="mb-10">
         <Stepper steps={STEPS} currentStep={currentStep} />
       </div>
 
-      {/* step 0: dependencies */}
-      <div className="flex flex-col gap-8">
-        {/* Step 1: Dependencies */}
-        <section
-          className={cn(
-            "border-border rounded-xl border p-6 transition-all duration-500",
-            currentStep === 0
-              ? "opacity-100"
-              : currentStep > 0
-                ? "pointer-events-none opacity-60"
-                : "opacity-40",
-          )}
-        >
-          <div className="mb-4 flex items-center gap-3">
-            <div className="bg-secondary flex size-9 items-center justify-center rounded-lg">
-              <Package className="text-muted-foreground size-4" />
-            </div>
-            <div>
-              <h2 className="text-foreground text-sm font-semibold">
-                Dependencies
-              </h2>
-              <p className="text-muted-foreground text-xs">
-                Choose how to provide your dependencies
-              </p>
-            </div>
+      {/* Step 1: Dependencies */}
+      <section
+        className={cn(
+          "border-border rounded-xl border p-6 transition-all duration-500",
+          currentStep === 0
+            ? "opacity-100"
+            : currentStep > 0
+              ? "pointer-events-none opacity-60"
+              : "opacity-40",
+        )}
+      >
+        <div className="mb-4 flex items-center gap-3">
+          <div className="bg-secondary flex size-9 items-center justify-center rounded-lg">
+            <Package className="text-muted-foreground size-4" />
           </div>
-          <DependencyInput
-            onSubmit={handleGetSkills}
-            disabledButtonAnalyze={currentStep > 0}
-            hasRepoAccess={hasRepoAccess}
-          />
-        </section>
-      </div>
+          <div>
+            <h2 className="text-foreground text-sm font-semibold">
+              Dependencies
+            </h2>
+            <p className="text-muted-foreground text-xs">
+              Choose how to provide your dependencies
+            </p>
+          </div>
+        </div>
+        <DependencyInput
+          onSubmit={handleGetSkills}
+          disabledButtonAnalyze={currentStep > 0}
+          hasRepoAccess={hasRepoAccess}
+        />
+      </section>
 
       {/* Step 2: Analyzing */}
       <section
@@ -137,82 +176,13 @@ export function RepoExplorer({ hasRepoAccess }: { hasRepoAccess: boolean }) {
           </div>
         </div>
 
-        {currentStep === 0 && (
-          <div className="text-muted-foreground flex flex-col items-center justify-center py-12">
-            <Package className="mb-3 size-8 opacity-40" />
-            <p className="text-sm">Waiting for dependencies input...</p>
-          </div>
-        )}
-
-        {isExecutingGetSkills ? (
-          <div className="flex items-center gap-2 text-white/60">
-            <Loader2 className="size-5 animate-spin duration-150" />
-            <span>Loading skills...</span>
-          </div>
-        ) : currentStep === 1 ? (
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center gap-2 text-red-500">
-              <XCircle className="h-4 w-4" />
-              <span className="text-sm font-medium">Analysis failed</span>
-            </div>
-            <p className="text-muted-foreground text-xs">
-              Something went wrong while analyzing your dependencies.
-            </p>
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-fit"
-              onClick={() => fetchSkills(lastPackageJsons)}
-            >
-              Try again
-            </Button>
-          </div>
-        ) : currentStep > 1 && skills && Object.keys(skills).length === 0 ? (
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center gap-2 text-yellow-500">
-              <AlertCircle className="h-4 w-4" />
-              <span className="text-sm font-medium">
-                No technologies identified
-              </span>
-            </div>
-            <p className="text-muted-foreground text-xs">
-              No stack-defining technologies were found in your dependencies.
-              The packages may be utility tools without a dedicated Claude skill
-              catalog.
-            </p>
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-fit"
-              onClick={handleReset}
-            >
-              Start over
-            </Button>
-          </div>
-        ) : currentStep > 1 && skills && Object.keys(skills).length > 0 ? (
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center gap-2 text-green-500">
-              <CheckCircle2 className="h-4 w-4" />
-              <span className="text-sm font-medium">Analysis complete</span>
-            </div>
-            <div className="flex flex-col flex-wrap gap-2">
-              <span className="text-muted-foreground text-xs font-medium">
-                Found {Object.keys(skills).length} technologies
-              </span>
-              <div className="flex flex-wrap gap-2">
-                {Object.keys(skills).map((tech) => (
-                  <Badge
-                    key={tech}
-                    variant="outline"
-                    className="shrink-0 border-green-500/50 bg-green-500/10 font-mono text-xs text-green-500"
-                  >
-                    {tech}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          </div>
-        ) : null}
+        <AnalysisSectionBody
+          status={analysisStatus}
+          skillKeys={skillKeys}
+          skillCount={skillCount}
+          onRetry={handleRetry}
+          onReset={handleReset}
+        />
       </section>
 
       {/* Step 3: Skills */}
@@ -229,14 +199,25 @@ export function RepoExplorer({ hasRepoAccess }: { hasRepoAccess: boolean }) {
           <div>
             <h2 className="text-foreground text-sm font-semibold">Skills</h2>
             <p className="text-muted-foreground text-xs">
-              {skills && Object.keys(skills).length > 0
-                ? `${Object.keys(skills).length} technologies, ${Object.values(skills).reduce((acc, value) => acc + value.length, 0)} skills found`
+              {skillCount > 0
+                ? `${skillCount} technologies, ${Object.values(skills!).reduce((acc, value) => acc + value.length, 0)} skills found`
                 : "Skills will appear after analysis"}
             </p>
           </div>
+          {currentStep === 2 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="ml-auto gap-1.5"
+              onClick={handleReset}
+            >
+              <RotateCcw className="h-3.5 w-3.5" />
+              Start over
+            </Button>
+          )}
         </div>
-        {skills && Object.keys(skills).length > 0 ? (
-          <SkillDisplay skills={skills} />
+        {skillCount > 0 ? (
+          <SkillDisplay skills={skills!} />
         ) : (
           <div className="text-muted-foreground flex flex-col items-center justify-center py-12">
             <Zap className="mb-3 size-8 opacity-40" />

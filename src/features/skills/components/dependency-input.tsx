@@ -1,8 +1,8 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { SelectRepo } from "@/features/skills/components/select-repo";
+import { TextAreaInput } from "@/features/skills/components/text-area-input";
 import { FileJson, GitBranch } from "lucide-react";
 import { toast } from "sonner";
-import { SelectRepo } from "./select-repo";
-import { TextAreaInput } from "./text-area-input";
 
 interface DependencyInputProps {
   onSubmit: ({

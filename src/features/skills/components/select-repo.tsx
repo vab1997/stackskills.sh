@@ -6,13 +6,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useGetPackagejson } from "@/features/skills/hooks/use-get-package-json";
+import { useGetRepositories } from "@/features/skills/hooks/use-get-repositories";
+import { useRequestRepoAccess } from "@/features/skills/hooks/use-request-repo-access";
 import { Github, Loader2, Package } from "lucide-react";
 import { useState } from "react";
 import ShikiHighlighter from "react-shiki";
 import { toast } from "sonner";
-import { useGetPackagejson } from "../hooks/use-get-package-json";
-import { useGetRepositories } from "../hooks/use-get-repositories";
-import { useRequestRepoAccess } from "../hooks/use-request-repo-access";
 
 export function SelectRepo({
   hasRepoAccess,

@@ -6,6 +6,7 @@ export function useGetSkills() {
     executeAsync: executeGetSkills,
     isExecuting: isExecutingGetSkills,
     result: resultGetSkills,
+    reset: resetGetSkills,
   } = useSafeAction(getSkillsAction, {
     showToast: false,
   });
@@ -16,6 +17,7 @@ export function useGetSkills() {
 
   return {
     fetchSkills,
+    resetSkills: resetGetSkills,
     isExecutingGetSkills,
     resultGetSkills: resultGetSkills.data,
   };
