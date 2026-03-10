@@ -38,15 +38,17 @@ export async function searchSkillsService({
 
     for (const { dependency, skills } of skillsByDependency) {
       if (skills.length === 0) continue;
-      results[dependency] = skills.map((skill) => ({
-        id: skill.id,
-        skillId: skill.skillId,
-        name: skill.name,
-        url: `https://skills.sh/${skill.id}`,
-        command: `npx skills add https://github.com/${skill.source} --skill ${skill.name}`,
-        installs: skill.installs,
-        source: skill.source,
-      }));
+      results[dependency] = skills
+        .map((skill) => ({
+          id: skill.id,
+          skillId: skill.skillId,
+          name: skill.name,
+          url: `https://skills.sh/${skill.id}`,
+          command: `npx skills add https://github.com/${skill.source} --skill ${skill.name}`,
+          installs: skill.installs,
+          source: skill.source,
+        }))
+        .toSorted((a, b) => b.installs - a.installs);
     }
     return results;
   } catch (error) {

@@ -113,14 +113,14 @@ export function SelectRepo({
       )}
 
       {resultGetPackageJson && !isExecutingGetPackageJson && (
-        <div className="h-full max-h-80 overflow-y-auto rounded-lg border border-white/10 bg-white/5 p-4">
+        <div className="h-full max-h-80 overflow-y-auto rounded-lg border border-white/10 p-4">
           <div className="mb-2 flex items-center gap-2 text-white/60">
             <Package className="h-4 w-4" />
             <span className="text-sm font-medium">package.json</span>
           </div>
           <ShikiHighlighter
             language="json"
-            theme="github-dark"
+            theme="github-dark-high-contrast"
             style={{
               textAlign: "left",
               fontSize: "12px",

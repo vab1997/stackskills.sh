@@ -73,11 +73,11 @@ export function Stepper({ steps, currentStep, className }: StepperProps) {
                 <AnimatePresence>
                   <motion.div
                     key={`step-${index}-progress`}
-                    className="absolute inset-x-0 top-0 origin-top bg-white"
+                    className="absolute inset-x-0 top-0 origin-left bg-white"
                     style={{ height: "100%" }}
-                    initial={{ scaleY: 0 }}
-                    animate={{ scaleY: currentStep > index ? 1 : 0 }}
-                    transition={{ duration: 0.2, ease: "easeInOut" }}
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: currentStep > index ? 1 : 0 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
                   />
                 </AnimatePresence>
               </div>
