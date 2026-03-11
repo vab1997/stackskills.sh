@@ -26,7 +26,7 @@ export function SignInButton() {
       type="button"
       variant="outline"
       size="icon"
-      className="w-fit px-2 transition-[background-color,transform] active:scale-[0.97]"
+      className="w-fit gap-1 px-2 transition-[background-color,transform] active:scale-[0.97]"
       onClick={handleSignIn}
       disabled={isLoading}
       aria-busy={isLoading}

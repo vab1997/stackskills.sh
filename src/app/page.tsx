@@ -8,14 +8,19 @@ import { hasRepoScope } from "@/features/skills/services";
 import { Suspense } from "react";
 
 async function WrapperSection() {
-  const session = await getSessionUser();
-  const hasRepoAccess = session.user
-    ? await hasRepoScope(session.user.id)
-    : false;
+  const sessionPromise = getSessionUser();
+  const hasRepoAccessPromise = sessionPromise.then((session) =>
+    session.user ? hasRepoScope(session.user.id) : false,
+  );
+
+  const [session, hasRepoAccess] = await Promise.all([
+    sessionPromise,
+    hasRepoAccessPromise,
+  ]);
 
   return (
     <section className="flex w-full flex-col items-center justify-center text-white">
-      {session.user ? <RepoExplorer hasRepoAccess={hasRepoAccess} /> : null}
+      <RepoExplorer hasRepoAccess={hasRepoAccess} user={session?.user} />
     </section>
   );
 }
@@ -26,7 +31,7 @@ export default function Home() {
       <Suspense fallback={<HeaderSkeleton />}>
         <Header />
       </Suspense>
-      <main className="relative mx-auto flex max-w-6xl flex-col items-center justify-center pb-20">
+      <main className="relative mx-auto flex max-w-6xl flex-col items-center justify-center pb-30">
         <Hero />
         <Suspense>
           <WrapperSection />

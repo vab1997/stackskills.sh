@@ -21,7 +21,7 @@ export function Hero() {
           </h1>
         </div>
 
-        <p className="text-primary text-center font-mono text-[15px] font-medium tracking-tight uppercase lg:text-left lg:text-[19px]">
+        <p className="text-center font-mono text-[15px] font-medium tracking-tight uppercase lg:text-left lg:text-[19px]">
           <AnimatedShinyText>
             Helps you explore the stack of a repository
           </AnimatedShinyText>
@@ -30,8 +30,8 @@ export function Hero() {
 
       <div>
         <p className="text-muted-foreground font-geist-sans mt-2 text-center text-xl leading-tight tracking-tight text-balance sm:text-2xl lg:text-left lg:text-3xl">
-          Stack Skills is a tool that helps you explore the stack of a
-          repository and find the skills.
+          StackSkills is a tool that helps you explore the stack of a repository
+          and find the skills.
         </p>
       </div>
     </div>

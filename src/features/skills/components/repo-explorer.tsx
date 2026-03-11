@@ -1,5 +1,6 @@
 "use client";
 
+import { FeaturesShowcase } from "@/components/show-case";
 import { Button } from "@/components/ui/button";
 import { AnalysisSectionBody } from "@/features/skills/components/analysis-section";
 import { DependencyInput } from "@/features/skills/components/dependency-input";
@@ -7,6 +8,7 @@ import { SkillDisplay } from "@/features/skills/components/skills-display";
 import { Stepper } from "@/features/skills/components/stepper";
 import { useGetSkills } from "@/features/skills/hooks/use-get-skills";
 import { cn } from "@/lib/utils";
+import { User } from "better-auth/types";
 import { Package, RotateCcw, Search, Sparkles, Zap } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -36,7 +38,13 @@ function getAnalysisStatus({
   return "idle";
 }
 
-export function RepoExplorer({ hasRepoAccess }: { hasRepoAccess: boolean }) {
+export function RepoExplorer({
+  hasRepoAccess,
+  user,
+}: {
+  hasRepoAccess: boolean;
+  user?: User;
+}) {
   const [currentStep, setCurrentStep] = useState(0);
   const [lastPackageJsons, setLastPackageJsons] = useState<string[]>([]);
   const [hasFetchError, setHasFetchError] = useState(false);
@@ -116,8 +124,12 @@ export function RepoExplorer({ hasRepoAccess }: { hasRepoAccess: boolean }) {
     skillCount,
   });
 
+  if (!user) {
+    return <FeaturesShowcase />;
+  }
+
   return (
-    <div className="mt-6 flex w-full flex-1 flex-col gap-8">
+    <div className="my-8 flex w-full flex-1 flex-col gap-8">
       <div className="mb-10">
         <Stepper steps={STEPS} currentStep={currentStep} />
       </div>
@@ -125,7 +137,7 @@ export function RepoExplorer({ hasRepoAccess }: { hasRepoAccess: boolean }) {
       {/* Step 1: Dependencies */}
       <section
         className={cn(
-          "border-border rounded-xl border p-6 transition-all duration-500",
+          "border-border rounded-xl border p-6 transition-all duration-300",
           currentStep === 0
             ? "opacity-100"
             : currentStep > 0
@@ -133,19 +145,40 @@ export function RepoExplorer({ hasRepoAccess }: { hasRepoAccess: boolean }) {
               : "opacity-40",
         )}
       >
-        <div className="mb-4 flex items-center gap-3">
-          <div className="bg-secondary flex size-9 items-center justify-center rounded-lg">
+        <div
+          className={cn(
+            "mb-4 flex items-center gap-3",
+            !user ? "pointer-events-none opacity-60" : "opacity-100",
+          )}
+        >
+          <div
+            className={cn(
+              "bg-secondary flex size-9 items-center justify-center rounded-lg",
+              !user ? "pointer-events-none opacity-60" : "opacity-100",
+            )}
+          >
             <Package className="text-muted-foreground size-4" />
           </div>
           <div>
-            <h2 className="text-foreground text-sm font-semibold">
+            <h2
+              className={cn(
+                "text-foreground text-sm font-semibold",
+                !user ? "pointer-events-none opacity-60" : "opacity-100",
+              )}
+            >
               Dependencies
             </h2>
-            <p className="text-muted-foreground text-xs">
+            <p
+              className={cn(
+                "text-muted-foreground text-xs",
+                !user ? "pointer-events-none opacity-60" : "opacity-100",
+              )}
+            >
               Choose how to provide your dependencies
             </p>
           </div>
         </div>
+
         <DependencyInput
           onSubmit={handleGetSkills}
           disabledButtonAnalyze={currentStep > 0}
@@ -156,7 +189,7 @@ export function RepoExplorer({ hasRepoAccess }: { hasRepoAccess: boolean }) {
       {/* Step 2: Analyzing */}
       <section
         className={cn(
-          "border-border rounded-xl border p-6 transition-all duration-500",
+          "rounded-xl border p-6 transition-all duration-300",
           currentStep === 1
             ? "opacity-100"
             : currentStep > 1
@@ -176,13 +209,15 @@ export function RepoExplorer({ hasRepoAccess }: { hasRepoAccess: boolean }) {
           </div>
         </div>
 
-        <AnalysisSectionBody
-          status={analysisStatus}
-          skillKeys={skillKeys}
-          skillCount={skillCount}
-          onRetry={handleRetry}
-          onReset={handleReset}
-        />
+        {user ? (
+          <AnalysisSectionBody
+            status={analysisStatus}
+            skillKeys={skillKeys}
+            skillCount={skillCount}
+            onRetry={handleRetry}
+            onReset={handleReset}
+          />
+        ) : null}
       </section>
 
       {/* Step 3: Skills */}
@@ -218,12 +253,12 @@ export function RepoExplorer({ hasRepoAccess }: { hasRepoAccess: boolean }) {
         </div>
         {skillCount > 0 ? (
           <SkillDisplay skills={skills!} />
-        ) : (
+        ) : user ? (
           <div className="text-muted-foreground flex flex-col items-center justify-center py-12">
             <Zap className="mb-3 size-8 opacity-40" />
             <p className="text-sm">Skills will appear after analysis...</p>
           </div>
-        )}
+        ) : null}
       </section>
     </div>
   );
