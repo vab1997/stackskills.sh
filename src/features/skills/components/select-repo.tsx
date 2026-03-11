@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -6,10 +7,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useGetPackagejson } from "@/features/skills/hooks/use-get-package-json";
 import { useGetRepositories } from "@/features/skills/hooks/use-get-repositories";
 import { useRequestRepoAccess } from "@/features/skills/hooks/use-request-repo-access";
-import { Github, Loader2, Package } from "lucide-react";
+import { Github, Info, Loader2, Package } from "lucide-react";
 import { useState } from "react";
 import ShikiHighlighter from "react-shiki";
 import { toast } from "sonner";
@@ -62,25 +68,44 @@ export function SelectRepo({
             <span>Loading repositories...</span>
           </div>
         ) : (
-          <Select
-            value={selectedRepo}
-            onValueChange={handleSelectedRepo}
-            name="repo-select"
-          >
-            <SelectTrigger className="w-full border-white/10 bg-white/5">
-              <SelectValue placeholder="Select a repository" />
-            </SelectTrigger>
-            <SelectContent>
-              {resultGetRepositories &&
-                resultGetRepositories.map((repo) => (
-                  <SelectItem key={repo.id} value={repo.full_name}>
-                    <span className="flex items-center gap-2">
-                      {repo.private ? "🔒" : "📂"} {repo.full_name}
-                    </span>
-                  </SelectItem>
-                ))}
-            </SelectContent>
-          </Select>
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <Label
+                htmlFor="repo-select"
+                className="text-muted-foreground ml-0.5 flex items-center gap-1.5 text-sm"
+              >
+                Select a repository
+              </Label>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info className="size-3.5 opacity-50" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  If you have a monorepo, recommend copy package.json from every
+                  package and use the paste option to analyze all of them.
+                </TooltipContent>
+              </Tooltip>
+            </div>
+            <Select
+              value={selectedRepo}
+              onValueChange={handleSelectedRepo}
+              name="repo-select"
+            >
+              <SelectTrigger className="w-full border-white/10 bg-white/5">
+                <SelectValue placeholder="Select a repository" />
+              </SelectTrigger>
+              <SelectContent>
+                {resultGetRepositories &&
+                  resultGetRepositories.map((repo) => (
+                    <SelectItem key={repo.id} value={repo.full_name}>
+                      <span className="flex items-center gap-2">
+                        {repo.private ? "🔒" : "📂"} {repo.full_name}
+                      </span>
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+          </div>
         )
       ) : (
         <Button

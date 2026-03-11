@@ -117,7 +117,7 @@ export function TextAreaInput({
           <Fragment key={entry.id}>
             <div
               className={cn(
-                "group/card border-border bg-muted/30 overflow-hidden rounded-lg border transition-colors",
+                "group/card border-border bg-background overflow-hidden rounded-lg border transition-colors",
                 errors[entry.id] ? "border-destructive" : "border-border",
               )}
             >
@@ -153,7 +153,7 @@ export function TextAreaInput({
                 aria-describedby={
                   errors[entry.id] ? `error-${entry.id}` : undefined
                 }
-                className="bg-muted/50 max-h-56 min-h-28 overflow-y-auto rounded-t-none border-none font-mono text-sm"
+                className="max-h-56 min-h-28 overflow-y-auto rounded-t-none border-none font-mono text-sm"
               />
             </div>
 

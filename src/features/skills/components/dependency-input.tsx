@@ -48,21 +48,22 @@ export function DependencyInput({
   };
 
   return (
-    <Tabs defaultValue="paste" className="w-full">
+    <Tabs defaultValue="repository" className="w-full">
       <TabsList className="bg-muted/50 w-full">
-        <TabsTrigger
-          value="paste"
-          className="text-muted-foreground flex-1 gap-2"
-        >
-          <FileJson className="size-3.5" />
-          Paste
-        </TabsTrigger>
         <TabsTrigger
           value="repository"
           className="text-muted-foreground flex-1 gap-2"
         >
           <GitBranch className="size-3.5" />
           Repository
+        </TabsTrigger>
+
+        <TabsTrigger
+          value="paste"
+          className="text-muted-foreground flex-1 gap-2"
+        >
+          <FileJson className="size-3.5" />
+          Paste
         </TabsTrigger>
       </TabsList>
 
