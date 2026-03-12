@@ -117,15 +117,11 @@ export function TextAreaInput({
           <Fragment key={entry.id}>
             <div
               className={cn(
-                "group/card border-border bg-background overflow-hidden rounded-lg border transition-colors",
+                "group/card border-border bg-background focus-within:border-ring overflow-hidden rounded-lg border transition-colors",
                 errors[entry.id] ? "border-destructive" : "border-border",
               )}
             >
-              <div
-                className={cn(
-                  "flex items-center justify-between border-b px-3 py-1.5",
-                )}
-              >
+              <div className="flex items-center justify-between border-b px-3 py-1.5">
                 <span className="text-muted-foreground flex items-center gap-1.5 text-xs font-medium">
                   <FileJson className="size-3" />
                   package.json {entries.length > 1 && `#${index + 1}`}
@@ -153,7 +149,7 @@ export function TextAreaInput({
                 aria-describedby={
                   errors[entry.id] ? `error-${entry.id}` : undefined
                 }
-                className="max-h-56 min-h-28 overflow-y-auto rounded-t-none border-none font-mono text-sm"
+                className="styled-scrollbar max-h-56 min-h-28 overflow-y-auto rounded-t-none border-none font-mono text-sm focus-visible:ring-0"
               />
             </div>
 
