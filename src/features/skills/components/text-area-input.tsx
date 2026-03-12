@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { FileJson, Plus, X } from "lucide-react";
-import { Fragment, useRef, useState } from "react";
+import { Fragment, useState } from "react";
 import z from "zod";
 
 const depsSchema = z.record(z.string(), z.string());
@@ -37,6 +37,8 @@ function validatePackageJson(content: string): string | null {
   }
 }
 
+const generateId = () => crypto.randomUUID();
+
 export function TextAreaInput({
   disabledButtonAnalyze,
   onSubmit,
@@ -48,18 +50,17 @@ export function TextAreaInput({
     packageJsonFromPaste: string[];
   }) => void;
 }) {
-  const nextId = useRef(1);
-  const [entries, setEntries] = useState<{ id: number; value: string }[]>([
-    { id: 0, value: "" },
+  const [entries, setEntries] = useState<{ id: string; value: string }[]>([
+    { id: generateId(), value: "" },
   ]);
-  const [errors, setErrors] = useState<Record<number, string | null>>({});
+  const [errors, setErrors] = useState<Record<string, string | null>>({});
 
   const addPackageJson = () => {
-    const id = nextId.current++;
+    const id = generateId();
     setEntries((prev) => [...prev, { id, value: "" }]);
   };
 
-  const removePackageJson = (id: number) => {
+  const removePackageJson = (id: string) => {
     setEntries((prev) => prev.filter((e) => e.id !== id));
     setErrors((prev) => {
       const next = { ...prev };
@@ -68,12 +69,12 @@ export function TextAreaInput({
     });
   };
 
-  const updatePackageJson = (id: number, value: string) => {
+  const updatePackageJson = (id: string, value: string) => {
     setEntries((prev) => prev.map((e) => (e.id === id ? { ...e, value } : e)));
     setErrors((prev) => ({ ...prev, [id]: null }));
   };
 
-  const handleBlur = (id: number, value: string) => {
+  const handleBlur = (id: string, value: string) => {
     setErrors((prev) => ({ ...prev, [id]: validatePackageJson(value) }));
   };
 

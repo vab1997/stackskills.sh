@@ -84,8 +84,9 @@ export function SelectRepo({
                   <Info className="size-3.5 opacity-50" />
                 </TooltipTrigger>
                 <TooltipContent>
-                  If you have a monorepo, recommend copy package.json from every
-                  package and use the paste option to analyze all of them.
+                  If you are working in a monorepo, switch to the “Paste” tab
+                  and paste the `package.json` files from each package so we can
+                  analyze them all together.
                 </TooltipContent>
               </Tooltip>
             </div>

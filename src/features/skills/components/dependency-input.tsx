@@ -59,7 +59,7 @@ export function DependencyInput({
           className="text-muted-foreground flex-1 gap-2"
         >
           <GitBranch className="size-3.5" />
-          Repository
+          From repository
         </TabsTrigger>
 
         <TabsTrigger
@@ -67,7 +67,7 @@ export function DependencyInput({
           className="text-muted-foreground flex-1 gap-2"
         >
           <FileJson className="size-3.5" />
-          Paste
+          Paste package.json
         </TabsTrigger>
       </TabsList>
 
