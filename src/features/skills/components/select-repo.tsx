@@ -13,25 +13,28 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useGetPackagejson } from "@/features/skills/hooks/use-get-package-json";
-import { useGetRepositories } from "@/features/skills/hooks/use-get-repositories";
 import { useRequestRepoAccess } from "@/features/skills/hooks/use-request-repo-access";
 import { Github, Info, Loader2, Package } from "lucide-react";
 import { useState } from "react";
 import ShikiHighlighter from "react-shiki";
 import { toast } from "sonner";
+import { GithubRepo } from "../types";
 
 export function SelectRepo({
   hasRepoAccess,
+  repositories,
+  isLoadingRepositories,
   disabledButtonAnalyze,
   onSubmit,
 }: {
   hasRepoAccess: boolean;
+  repositories?: GithubRepo[];
+  isLoadingRepositories: boolean;
   disabledButtonAnalyze: boolean;
   onSubmit: ({ packageJson }: { packageJson: string }) => void;
 }) {
   const [selectedRepo, setSelectedRepo] = useState<string>("");
-  const { isExecutingGetRepositories, resultGetRepositories } =
-    useGetRepositories({ hasRepoAccess });
+
   const { fetchPackageJson, isExecutingGetPackageJson, resultGetPackageJson } =
     useGetPackagejson();
   const { requestRepoAccess, isExecutingRequestRepoAccess } =
@@ -62,7 +65,7 @@ export function SelectRepo({
       </label>
 
       {hasRepoAccess ? (
-        isExecutingGetRepositories ? (
+        isLoadingRepositories ? (
           <div className="flex items-center gap-2 text-white/60">
             <Loader2 className="h-4 w-4 animate-spin" />
             <span>Loading repositories...</span>
@@ -95,8 +98,8 @@ export function SelectRepo({
                 <SelectValue placeholder="Select a repository" />
               </SelectTrigger>
               <SelectContent>
-                {resultGetRepositories &&
-                  resultGetRepositories.map((repo) => (
+                {repositories &&
+                  repositories.map((repo) => (
                     <SelectItem key={repo.id} value={repo.full_name}>
                       <span className="flex items-center gap-2">
                         {repo.private ? "🔒" : "📂"} {repo.full_name}
