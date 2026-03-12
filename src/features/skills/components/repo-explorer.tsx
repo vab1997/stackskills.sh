@@ -48,6 +48,7 @@ export function RepoExplorer({
   const [currentStep, setCurrentStep] = useState(0);
   const [lastPackageJsons, setLastPackageJsons] = useState<string[]>([]);
   const [hasFetchError, setHasFetchError] = useState(false);
+  const [resetKey, setResetKey] = useState(0);
 
   const {
     fetchSkills,
@@ -61,6 +62,7 @@ export function RepoExplorer({
     setLastPackageJsons([]);
     setHasFetchError(false);
     resetSkills();
+    setResetKey((k) => k + 1);
   };
 
   const runFetch = async (packageJsons: string[]) => {
@@ -145,41 +147,22 @@ export function RepoExplorer({
               : "opacity-40",
         )}
       >
-        <div
-          className={cn(
-            "mb-4 flex items-center gap-3",
-            !user ? "pointer-events-none opacity-60" : "opacity-100",
-          )}
-        >
-          <div
-            className={cn(
-              "bg-secondary flex size-9 items-center justify-center rounded-lg",
-              !user ? "pointer-events-none opacity-60" : "opacity-100",
-            )}
-          >
+        <div className="mb-4 flex items-center gap-3">
+          <div className="bg-secondary flex size-9 items-center justify-center rounded-lg">
             <Package className="text-muted-foreground size-4" />
           </div>
           <div>
-            <h2
-              className={cn(
-                "text-foreground text-sm font-semibold",
-                !user ? "pointer-events-none opacity-60" : "opacity-100",
-              )}
-            >
+            <h2 className="text-foreground text-sm font-semibold">
               Dependencies
             </h2>
-            <p
-              className={cn(
-                "text-muted-foreground text-xs",
-                !user ? "pointer-events-none opacity-60" : "opacity-100",
-              )}
-            >
+            <p className="text-muted-foreground text-xs">
               Choose how to provide your dependencies
             </p>
           </div>
         </div>
 
         <DependencyInput
+          key={resetKey}
           onSubmit={handleGetSkills}
           disabledButtonAnalyze={currentStep > 0}
           hasRepoAccess={hasRepoAccess}
