@@ -138,7 +138,7 @@ export function SelectRepo({
       )}
 
       {resultGetPackageJson && !isExecutingGetPackageJson && (
-        <div className="h-full max-h-80 overflow-y-auto rounded-lg border border-white/10 p-4">
+        <div className="h-full max-h-80 rounded-lg border border-white/10 p-4">
           <div className="mb-2 flex items-center gap-2 text-white/60">
             <Package className="h-4 w-4" />
             <span className="text-sm font-medium">package.json</span>
@@ -149,6 +149,10 @@ export function SelectRepo({
             style={{
               textAlign: "left",
               fontSize: "12px",
+              overflowY: "auto",
+              scrollbarWidth: "thin",
+              scrollbarColor: "var(--border) transparent",
+              maxHeight: "250px",
             }}
             showLanguage={false}
           >
