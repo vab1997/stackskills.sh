@@ -167,3 +167,29 @@
     background-color: var(--ring);
   }
 }
+
+@keyframes ellipsis {
+  0% {
+    content: "";
+  }
+  33% {
+    content: ".";
+  }
+  66% {
+    content: "..";
+  }
+  100% {
+    content: "...";
+  }
+}
+.animate-ellipsis::after {
+  content: "";
+  animation: ellipsis 1s steps(3, end) infinite;
+}
+/* Respeto a prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-ellipsis::after {
+    animation: none;
+    content: "...";
+  }
+}
