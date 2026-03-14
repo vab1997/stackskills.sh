@@ -1,4 +1,5 @@
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { getBaseURL } from "@/lib/get-base-url";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import {
@@ -35,9 +36,35 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "StackSkills",
+  metadataBase: new URL(getBaseURL()),
+
+  title: {
+    default: "StackSkills — AI Skills for Your Stack",
+    template: "%s | StackSkills",
+  },
   description:
-    "StackSkills is a platform for developers to find and share skills.",
+    "Paste your package.json and StackSkills uses AI to surface installable agent skills from skills.sh matched to your exact tech stack.",
+
+  openGraph: {
+    type: "website",
+    url: "/",
+    siteName: "StackSkills",
+    title: "StackSkills — AI Skills for Your Stack",
+    description:
+      "Paste your package.json and StackSkills uses AI to surface installable agent skills from skills.sh matched to your exact tech stack.",
+    images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "StackSkills — AI Skills for Your Stack",
+    description:
+      "Paste your package.json and StackSkills uses AI to surface installable agent skills from skills.sh matched to your exact tech stack.",
+    images: ["/opengraph-image"],
+    creator: "@victorbejas",
+  },
+
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({
@@ -60,6 +87,27 @@ export default function RootLayout({
       >
         <TooltipProvider>{children}</TooltipProvider>
         <Toaster theme="dark" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              name: "StackSkills",
+              url: getBaseURL(),
+              applicationCategory: "DeveloperApplication",
+              operatingSystem: "Web",
+              description:
+                "AI-powered tool that analyzes package.json dependencies and surfaces installable agent skills from skills.sh matched to your tech stack.",
+              author: {
+                "@type": "Person",
+                name: "Victor Bejas",
+                url: "https://x.com/victorbejas",
+              },
+              offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+            }),
+          }}
+        />
       </body>
     </html>
   );

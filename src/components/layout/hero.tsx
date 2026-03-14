@@ -23,15 +23,15 @@ export function Hero() {
 
         <p className="text-center font-mono text-[15px] font-medium tracking-tight uppercase lg:text-left lg:text-[19px]">
           <AnimatedShinyText>
-            Helps you explore the stack of a repository
+            Discover AI agent skills for your tech stack
           </AnimatedShinyText>
         </p>
       </div>
 
       <div>
-        <p className="text-muted-foreground font-geist-sans mt-2 text-center text-xl leading-tight tracking-tight text-balance sm:text-2xl lg:text-left lg:text-3xl">
-          StackSkills is a tool that helps you explore the stack of a repository
-          and find the skills.
+        <p className="text-muted-foreground font-geist-sans mt-2 text-center text-xl leading-tight tracking-tight text-pretty sm:text-2xl lg:text-left lg:text-3xl">
+          Paste your package.json — StackSkills uses AI to surface installable
+          agent skills from skills.sh matched to your exact tech stack.
         </p>
       </div>
     </div>
