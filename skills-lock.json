@@ -1,6 +1,11 @@
 {
   "version": 1,
   "skills": {
+    "core-web-vitals": {
+      "source": "addyosmani/web-quality-skills",
+      "sourceType": "github",
+      "computedHash": "fa437acc2249cea2cb28f190ba7faf8fdfac829d1c1aafa9ce938c6dd9338721"
+    },
     "nextjs-caching": {
       "source": "goncy/skills",
       "sourceType": "github",
@@ -10,6 +15,11 @@
       "source": "goncy/skills",
       "sourceType": "github",
       "computedHash": "18f973dea2b8a783ec6f6d5d50a16973d65406ce1d380929c0822c0fc8d28451"
+    },
+    "seo": {
+      "source": "addyosmani/web-quality-skills",
+      "sourceType": "github",
+      "computedHash": "f1fed683b76913d26fbf1aa1e008e6932f7771701fc3a79925b042236aa4681a"
     }
   }
 }
