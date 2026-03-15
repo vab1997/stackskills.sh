@@ -18,3 +18,16 @@ export interface SkillsApiSkill {
 }
 
 export type SkillsByDependency = Record<string, SkillsApiSkill[]>;
+
+export type SkillsStreamEvent =
+  | { type: "detecting" }
+  | { type: "technologies_found"; technologies: string[] }
+  | { type: "fetching_skills"; total: number }
+  | {
+      type: "skill_fetched";
+      technology: string;
+      fetched: number;
+      total: number;
+    }
+  | { type: "complete"; skills: SkillsByDependency }
+  | { type: "error"; message: string };

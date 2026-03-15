@@ -1,7 +1,3 @@
-import { getSessionUser } from "@/features/auth/server";
-import { getGithubToken } from "@/features/skills/services";
-import { searchSkillsService } from "@/features/skills/services/search-skills";
-import type { SkillsByDependency } from "@/features/skills/types";
 import { logger } from "@/lib/logger";
 import {
   APICallError,
@@ -59,6 +55,7 @@ Rules:
   - "zod"
   - "tailwindcss"
   - "vitest"
+  - "shadcn"
 
 • Framework plugins normalize to their technology
   - "@tanstack/react-query" → "react-query"
@@ -98,7 +95,7 @@ Examples to omit:
 - floating-ui
 - aria libraries
 
-Only include UI frameworks developers interact with directly.
+Only include UI frameworks developers interact with directly (e.g. shadcn).
 </component-primitives-rule>
 
 <omit-these>
@@ -207,7 +204,7 @@ function isModelFallbackError(error: unknown): boolean {
   return false;
 }
 
-async function identifyTechnologies(
+export async function identifyTechnologies(
   dependencies: Record<string, string>,
   devDependencies: Record<string, string>,
 ): Promise<string[]> {
@@ -266,75 +263,4 @@ async function identifyTechnologies(
 
   logger.error({ lastError }, "All model attempts failed");
   throw lastError;
-}
-
-async function getSkillsFromPackageJson({
-  dependencies,
-  devDependencies,
-}: {
-  dependencies: Record<string, string>;
-  devDependencies: Record<string, string>;
-}): Promise<SkillsByDependency> {
-  const technologies = await identifyTechnologies(
-    dependencies,
-    devDependencies,
-  );
-  if (technologies.length === 0) return {};
-  return searchSkillsService({
-    dependencies: technologies,
-  });
-}
-
-const discoverSkillsFromDependencies = async ({
-  packageJsons,
-}: {
-  packageJsons: string[];
-}): Promise<SkillsByDependency> => {
-  if (!Array.isArray(packageJsons) || packageJsons.length === 0) {
-    return {};
-  }
-
-  const mergedDeps: Record<string, string> = {};
-  const mergedDevDeps: Record<string, string> = {};
-  for (const pkgStr of packageJsons) {
-    try {
-      const pkg = JSON.parse(pkgStr);
-      Object.assign(mergedDeps, pkg.dependencies ?? {});
-      Object.assign(mergedDevDeps, pkg.devDependencies ?? {});
-    } catch {
-      logger.warn("Skipping invalid package.json entry");
-      continue;
-    }
-  }
-
-  const skills = await getSkillsFromPackageJson({
-    dependencies: mergedDeps,
-    devDependencies: mergedDevDeps,
-  });
-
-  return skills;
-};
-
-export async function getSkillsService({
-  packageJsons,
-}: {
-  packageJsons: string[];
-}) {
-  const session = await getSessionUser();
-
-  if (!session.user) {
-    throw new Error("Unauthorized");
-  }
-
-  const token = await getGithubToken(session.user.id);
-  if (!token) {
-    throw new Error("No GitHub token found");
-  }
-
-  try {
-    return await discoverSkillsFromDependencies({ packageJsons });
-  } catch (error) {
-    logger.error({ error }, "Error getting skills");
-    throw new Error("Failed to get skills");
-  }
 }

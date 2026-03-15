@@ -31,7 +31,7 @@ export default function Home() {
       <Suspense fallback={<HeaderSkeleton />}>
         <Header />
       </Suspense>
-      <main className="relative mx-auto flex max-w-6xl flex-col items-center justify-center pb-30">
+      <main className="relative mx-auto flex max-w-6xl flex-col items-center justify-center px-4 pb-30">
         <Hero />
         <Suspense>
           <WrapperSection />

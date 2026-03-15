@@ -13,6 +13,7 @@ Understand that Next.js has exactly two rendering modes: **static** and **dynami
 Static pages involve no compute at request time. They are built once, uploaded to a CDN, and replicated to edge locations globally. Dynamic pages execute in a configured region when requested.
 
 This distinction explains three critical behaviors:
+
 - Static content is faster because it requires no compute and is cached near the user
 - Static content remains available if a region goes down; dynamic content does not
 - Streaming is disabled for static content because there is no live render process to stream from
@@ -52,18 +53,16 @@ Wrap the HTML document with an empty Suspense boundary to block the server from 
 
 ```tsx
 // layout.tsx
-import { Suspense } from 'react'
+import { Suspense } from "react";
 
 export default function RootLayout({ children }) {
   return (
     <html>
       <body>
-        <Suspense fallback={null}>
-          {children}
-        </Suspense>
+        <Suspense fallback={null}>{children}</Suspense>
       </body>
     </html>
-  )
+  );
 }
 ```
 
@@ -72,16 +71,17 @@ This pattern ensures the shell (html, body) streams immediately while the page c
 ### Using Cache Components Correctly
 
 Adding `"use cache"` to a page or its main component produces static output. This cached output:
+
 - Will not stream
 - Will not have "holes" (Suspense fallback slots)
 - Behaves like a static page even if it contains async operations
 
 ```tsx
-"use cache"
+"use cache";
 
 export default async function Page() {
-  const data = await fetchData() // Cached, no streaming
-  return <div>{data}</div>
+  const data = await fetchData(); // Cached, no streaming
+  return <div>{data}</div>;
 }
 ```
 

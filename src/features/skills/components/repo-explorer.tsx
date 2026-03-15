@@ -6,7 +6,7 @@ import { AnalysisSectionBody } from "@/features/skills/components/analysis-secti
 import { DependencyInput } from "@/features/skills/components/dependency-input";
 import { SkillDisplay } from "@/features/skills/components/skills-display";
 import { Stepper } from "@/features/skills/components/stepper";
-import { useGetSkills } from "@/features/skills/hooks/use-get-skills";
+import { useStreamSkills } from "@/features/skills/hooks/use-stream-skills";
 import { cn } from "@/lib/utils";
 import { User } from "better-auth/types";
 import { Package, RotateCcw, Search, Sparkles, Zap } from "lucide-react";
@@ -19,25 +19,6 @@ const STEPS = [
   { label: "Skills", description: "Relevant skills" },
 ];
 
-function getAnalysisStatus({
-  isLoading,
-  hasError,
-  step,
-  skillCount,
-}: {
-  isLoading: boolean;
-  hasError: boolean;
-  step: number;
-  skillCount: number;
-}) {
-  if (step === 0) return "idle";
-  if (isLoading) return "loading";
-  if (hasError) return "error";
-  if (step > 1 && skillCount === 0) return "empty";
-  if (step > 1 && skillCount > 0) return "success";
-  return "idle";
-}
-
 export function RepoExplorer({
   hasRepoAccess,
   user,
@@ -47,37 +28,27 @@ export function RepoExplorer({
 }) {
   const [currentStep, setCurrentStep] = useState(0);
   const [lastPackageJsons, setLastPackageJsons] = useState<string[]>([]);
-  const [hasFetchError, setHasFetchError] = useState(false);
   const [resetKey, setResetKey] = useState(0);
 
-  const {
-    fetchSkills,
-    resetSkills,
-    isExecutingGetSkills,
-    resultGetSkills: skills,
-  } = useGetSkills();
+  const { streamSkills, resetStream, streamState } = useStreamSkills();
 
   const handleReset = () => {
     setCurrentStep(0);
     setLastPackageJsons([]);
-    setHasFetchError(false);
-    resetSkills();
+    resetStream();
     setResetKey((k) => k + 1);
   };
 
   const runFetch = async (packageJsons: string[]) => {
-    setHasFetchError(false);
     setCurrentStep(1);
-    await fetchSkills(packageJsons);
-    setCurrentStep(2);
+    const finalPhase = await streamSkills(packageJsons);
+    if (finalPhase === "complete") setCurrentStep(2);
   };
 
   const handleRetry = async () => {
     try {
       await runFetch(lastPackageJsons);
     } catch {
-      setHasFetchError(true);
-      setCurrentStep(1);
       toast.error("Something went wrong while analyzing your dependencies.", {
         description: "Please try again.",
       });
@@ -108,27 +79,21 @@ export function RepoExplorer({
     try {
       await runFetch(packageJsons);
     } catch {
-      setHasFetchError(true);
-      setCurrentStep(1);
       toast.error("Something went wrong while analyzing your dependencies.", {
         description: "Please try again.",
       });
     }
   };
 
-  const skillKeys = skills ? Object.keys(skills) : [];
+  const skills = streamState.skills ?? {};
+  const skillKeys = Object.keys(skills);
   const skillCount = skillKeys.length;
-
-  const analysisStatus = getAnalysisStatus({
-    isLoading: isExecutingGetSkills,
-    hasError: hasFetchError,
-    step: currentStep,
-    skillCount,
-  });
 
   if (!user) {
     return <FeaturesShowcase />;
   }
+
+  console.log({ streamState });
 
   return (
     <div className="my-8 flex w-full flex-1 flex-col gap-8">
@@ -194,9 +159,7 @@ export function RepoExplorer({
 
         {user ? (
           <AnalysisSectionBody
-            status={analysisStatus}
-            skillKeys={skillKeys}
-            skillCount={skillCount}
+            streamState={streamState}
             onRetry={handleRetry}
             onReset={handleReset}
           />
@@ -218,7 +181,7 @@ export function RepoExplorer({
             <h2 className="text-foreground text-sm font-semibold">Skills</h2>
             <p className="text-muted-foreground text-xs">
               {skillCount > 0
-                ? `${skillCount} technologies, ${Object.values(skills!).reduce((acc, value) => acc + value.length, 0)} skills found`
+                ? `${skillCount} technologies, ${Object.values(skills).reduce((acc, value) => acc + value.length, 0)} skills found`
                 : "Skills will appear after analysis"}
             </p>
           </div>
@@ -235,7 +198,7 @@ export function RepoExplorer({
           )}
         </div>
         {skillCount > 0 ? (
-          <SkillDisplay skills={skills!} />
+          <SkillDisplay skills={skills} />
         ) : user ? (
           <div className="text-muted-foreground flex flex-col items-center justify-center py-12">
             <Zap className="mb-3 size-8 opacity-40" />

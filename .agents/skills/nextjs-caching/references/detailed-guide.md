@@ -18,10 +18,10 @@ The `"use cache"` directive does not immediately cache content. It marks a compo
 
 ```tsx
 // Marks the component as cacheable — cache populated at build time
-"use cache"
+"use cache";
 
 export default function ProductList() {
-  return <div>...</div>
+  return <div>...</div>;
 }
 ```
 
@@ -51,16 +51,16 @@ Every cacheable function receives a snapshot when called at build time. Using a 
 
 ```tsx
 // These are conceptually similar
-revalidatePath('/products')
-revalidateTag('/products')
+revalidatePath("/products");
+revalidateTag("/products");
 ```
 
 ### revalidateTag vs updateTag
 
-| Function | Behavior | Use Case |
-|----------|----------|----------|
-| `revalidateTag` | Stale-while-revalidate when used in server actions | Background refresh, users see stale then fresh |
-| `updateTag` | Read-your-own-writes, purges previous cache immediately | When user must see their own changes immediately |
+| Function        | Behavior                                                | Use Case                                         |
+| --------------- | ------------------------------------------------------- | ------------------------------------------------ |
+| `revalidateTag` | Stale-while-revalidate when used in server actions      | Background refresh, users see stale then fresh   |
+| `updateTag`     | Read-your-own-writes, purges previous cache immediately | When user must see their own changes immediately |
 
 **Important:** `updateTag` cannot be used in route handlers.
 
@@ -69,10 +69,10 @@ revalidateTag('/products')
 `connection()` is the stable replacement for `unstable_noStore()`. Use it to opt out of static rendering:
 
 ```tsx
-import { connection } from 'next/server'
+import { connection } from "next/server";
 
 export default async function Page() {
-  await connection()
+  await connection();
   // This page is now dynamic
 }
 ```
@@ -99,21 +99,22 @@ Functions wrapped with `unstable_cache` are considered **instant** by the Next.j
 Adding `"use cache"` to a page makes it work like Incremental Static Regeneration (ISR). The entire output is cached — caches cannot be partial. No dynamic holes are created.
 
 To achieve ISR-like behavior for a path:
+
 1. Add `"use cache"` to the top of the file, OR
 2. Add `"use cache"` to the main exported component
 
 ```tsx
 // Option 1: File-level
-"use cache"
+"use cache";
 
 export default function Page() {
-  return <div>Fully cached page</div>
+  return <div>Fully cached page</div>;
 }
 
 // Option 2: Component-level
 export default function Page() {
-  "use cache"
-  return <div>Fully cached page</div>
+  "use cache";
+  return <div>Fully cached page</div>;
 }
 ```
 
@@ -127,9 +128,9 @@ When parts of a page need caching while others remain dynamic:
 
 ```tsx
 // page.tsx — no "use cache" here
-import { Suspense } from 'react'
-import { CachedSidebar } from './CachedSidebar'
-import { DynamicFeed } from './DynamicFeed'
+import { Suspense } from "react";
+import { CachedSidebar } from "./CachedSidebar";
+import { DynamicFeed } from "./DynamicFeed";
 
 export default function Page() {
   return (
@@ -139,7 +140,7 @@ export default function Page() {
         <DynamicFeed /> {/* Dynamic, fetches fresh data */}
       </Suspense>
     </div>
-  )
+  );
 }
 ```
 
@@ -154,6 +155,7 @@ When using `"use cache"` on a component containing a Suspense boundary (with a d
 3. Subsequent requests serve cached content
 
 To show dynamic content within the Suspense boundary on every request:
+
 1. Extract static content to its own component
 2. Add `"use cache"` only to the static component
 3. Or use a parallel route with this approach
@@ -164,23 +166,28 @@ When a cached value from a layout is needed in a page, cache the **function outp
 
 ```tsx
 // lib/data.ts
-import { unstable_cache } from 'next/cache'
+import { unstable_cache } from "next/cache";
 
 export const getCachedUser = unstable_cache(
   async (id: string) => fetchUser(id),
-  ['user-cache']
-)
+  ["user-cache"],
+);
 
 // layout.tsx
 export default async function Layout({ children }) {
-  const user = await getCachedUser('123')
-  return <div><Nav user={user} />{children}</div>
+  const user = await getCachedUser("123");
+  return (
+    <div>
+      <Nav user={user} />
+      {children}
+    </div>
+  );
 }
 
 // page.tsx
 export default async function Page() {
-  const user = await getCachedUser('123') // Cache hit
-  return <Profile user={user} />
+  const user = await getCachedUser("123"); // Cache hit
+  return <Profile user={user} />;
 }
 ```
 
@@ -194,11 +201,11 @@ Setting `"use cache"` in a layout does **NOT** make child pages static. Each pag
 
 ```tsx
 // layout.tsx
-"use cache"  // Only caches the layout itself
+"use cache"; // Only caches the layout itself
 
 // page.tsx — still dynamic unless it also has "use cache"
 export default function Page() {
-  return <DynamicContent />
+  return <DynamicContent />;
 }
 ```
 
@@ -212,14 +219,14 @@ Without `generateStaticParams`, dynamic pages fail because there's no Suspense b
 
 ```tsx
 export async function generateStaticParams() {
-  return [{ id: '__placeholder__' }]
+  return [{ id: "__placeholder__" }];
 }
 
 export default function Page({ params }) {
-  if (params.id === '__placeholder__') {
-    return null // or redirect
+  if (params.id === "__placeholder__") {
+    return null; // or redirect
   }
-  return <Content id={params.id} />
+  return <Content id={params.id} />;
 }
 ```
 
@@ -244,6 +251,7 @@ Static pages sometimes show as `ppr` in build logs. This is not a reliable indic
 ### Edge Proxy Architecture
 
 The proxy that returns the shell runs on the edge. It:
+
 1. Returns the static shell immediately
 2. Continues the request for dynamic content in parallel
 
@@ -252,5 +260,6 @@ If a region goes down, the proxy continues functioning — it's decoupled from t
 ### Cache Snapshot Timing
 
 Cacheable functions get their snapshots at build time. When using a cached function in a dynamic component:
+
 - **Build-time call:** Guaranteed cache hit on subsequent requests
 - **Runtime-only call:** Serves as in-memory cache only, no persistence guarantee
