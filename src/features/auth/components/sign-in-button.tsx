@@ -1,8 +1,9 @@
 "use client";
 
+import { Loader } from "@/components/loader";
 import { Button } from "@/components/ui/button";
 import { signInWithGithub } from "@/features/auth/client";
-import { Github, Loader2 } from "lucide-react";
+import { Github } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -32,7 +33,7 @@ export function SignInButton() {
       aria-busy={isLoading}
     >
       {isLoading ? (
-        <Loader2 className="size-5 animate-spin" />
+        <Loader className="size-5" />
       ) : (
         <Github className="size-5" />
       )}

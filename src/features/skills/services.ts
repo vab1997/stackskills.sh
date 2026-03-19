@@ -9,7 +9,7 @@ export async function hasRepoScope(userId: string): Promise<boolean> {
     .where(and(eq(account.userId, userId), eq(account.providerId, "github")))
     .limit(1);
   const scopes = (result[0]?.scope ?? "").split(/[\s,]+/);
-  return scopes.includes("repo");
+  return scopes.includes("public_repo");
 }
 
 export async function getGithubToken(userId: string): Promise<string | null> {

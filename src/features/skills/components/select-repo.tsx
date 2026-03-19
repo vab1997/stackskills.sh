@@ -1,3 +1,4 @@
+import { Loader } from "@/components/loader";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
@@ -14,7 +15,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useGetPackagejson } from "@/features/skills/hooks/use-get-package-json";
 import { useRequestRepoAccess } from "@/features/skills/hooks/use-request-repo-access";
-import { Github, Info, Loader2, Package } from "lucide-react";
+import { Github, Info, Package } from "lucide-react";
 import { useState } from "react";
 import ShikiHighlighter from "react-shiki";
 import { toast } from "sonner";
@@ -67,7 +68,7 @@ export function SelectRepo({
       {hasRepoAccess ? (
         isLoadingRepositories ? (
           <div className="flex items-center gap-2 text-white/60">
-            <Loader2 className="h-4 w-4 animate-spin" />
+            <Loader className="size-4" />
             <span>Loading repositories...</span>
           </div>
         ) : (
@@ -122,7 +123,7 @@ export function SelectRepo({
         >
           {isExecutingRequestRepoAccess ? (
             <>
-              <Loader2 className="size-4 animate-spin" />
+              <Loader className="size-4" />
               Connecting GitHub Repositories...
             </>
           ) : (
@@ -136,7 +137,7 @@ export function SelectRepo({
 
       {isExecutingGetPackageJson && (
         <div className="flex items-center gap-2 text-white/60">
-          <Loader2 className="h-4 w-4 animate-spin" />
+          <Loader className="size-4" />
           <span>Loading package.json...</span>
         </div>
       )}
@@ -144,7 +145,7 @@ export function SelectRepo({
       {resultGetPackageJson && !isExecutingGetPackageJson && (
         <div className="h-full max-h-80 rounded-lg border border-white/10 p-4">
           <div className="mb-2 flex items-center gap-2 text-white/60">
-            <Package className="h-4 w-4" />
+            <Package className="size-4" />
             <span className="text-sm font-medium">package.json</span>
           </div>
           <ShikiHighlighter

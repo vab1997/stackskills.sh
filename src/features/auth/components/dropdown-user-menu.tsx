@@ -12,7 +12,7 @@ import {
 import { authClient } from "@/features/auth/client";
 import { links } from "@/lib/links";
 import type { User } from "better-auth";
-import { ChevronDownIcon } from "lucide-react";
+import { ChevronDownIcon, LogOutIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export function DropdownUserMenu({ user }: { user: User }) {
@@ -36,6 +36,7 @@ export function DropdownUserMenu({ user }: { user: User }) {
       <DropdownMenuContent className="w-40" align="start">
         <DropdownMenuGroup>
           <DropdownMenuItem
+            variant="destructive"
             onClick={() =>
               authClient.signOut({
                 fetchOptions: {
@@ -44,6 +45,7 @@ export function DropdownUserMenu({ user }: { user: User }) {
               })
             }
           >
+            <LogOutIcon />
             Log out
           </DropdownMenuItem>
         </DropdownMenuGroup>

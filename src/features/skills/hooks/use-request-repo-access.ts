@@ -15,7 +15,7 @@ export function useRequestRepoAccess() {
       const result = await authClient.linkSocial({
         provider: "github",
         callbackURL: "/oauth-popup-callback",
-        scopes: ["repo"],
+        scopes: ["public_repo"],
         disableRedirect: true,
       });
 

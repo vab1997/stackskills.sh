@@ -93,8 +93,6 @@ export function RepoExplorer({
     return <FeaturesShowcase />;
   }
 
-  console.log({ streamState });
-
   return (
     <div className="my-8 flex w-full flex-1 flex-col gap-8">
       <div className="mb-10">

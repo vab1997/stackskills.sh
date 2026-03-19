@@ -1,10 +1,10 @@
+import { Loader } from "@/components/loader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { StreamState } from "@/features/skills/hooks/use-stream-skills";
 import {
   AlertCircle,
   CheckCircle2,
-  Loader2,
   Package,
   Settings,
   XCircle,
@@ -100,7 +100,7 @@ export function AnalysisSectionBody({
                 ))}
               </div>
               <div className="flex animate-pulse items-center gap-2 text-sm text-white/60">
-                <Loader2 className="size-4 animate-spin" />
+                <Loader className="size-4" />
                 <span>Fetching skills...</span>
               </div>
             </div>
@@ -136,7 +136,7 @@ export function AnalysisSectionBody({
                 </div>
               )}
               <div className="flex animate-pulse items-center gap-2 text-sm text-white/60">
-                <Loader2 className="size-4 animate-spin" />
+                <Loader className="size-4" />
                 <span>
                   Fetching skills ({fetchedCount} / {totalCount})
                 </span>
