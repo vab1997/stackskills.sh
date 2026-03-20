@@ -10,12 +10,6 @@ function StackIllustration() {
       viewBox="0 0 272 267"
     >
       <path
-        stroke="#D0D6E0"
-        strokeWidth="0.5"
-        d="M132.5 70 L252 190 L132.5 250 L13 190 Z"
-      ></path>
-
-      <path
         stroke="#3E3E44"
         strokeLinecap="round"
         strokeWidth="0.5"

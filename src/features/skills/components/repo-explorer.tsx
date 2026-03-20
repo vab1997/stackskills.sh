@@ -1,6 +1,5 @@
 "use client";
 
-import { FeaturesShowcase } from "@/components/show-case";
 import { Button } from "@/components/ui/button";
 import { AnalysisSectionBody } from "@/features/skills/components/analysis-section";
 import { DependencyInput } from "@/features/skills/components/dependency-input";
@@ -24,7 +23,7 @@ export function RepoExplorer({
   user,
 }: {
   hasRepoAccess: boolean;
-  user?: User;
+  user: User;
 }) {
   const [currentStep, setCurrentStep] = useState(0);
   const [lastPackageJsons, setLastPackageJsons] = useState<string[]>([]);
@@ -88,10 +87,6 @@ export function RepoExplorer({
   const skills = streamState.skills ?? {};
   const skillKeys = Object.keys(skills);
   const skillCount = skillKeys.length;
-
-  if (!user) {
-    return <FeaturesShowcase />;
-  }
 
   return (
     <div className="my-8 flex w-full flex-1 flex-col gap-8">
