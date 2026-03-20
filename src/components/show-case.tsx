@@ -9,18 +9,18 @@ function StackIllustration() {
       fill="none"
       viewBox="0 0 272 267"
     >
-      <path
+      {/* <path
         stroke="#3E3E44"
         strokeLinecap="round"
         strokeWidth="0.5"
         d="M13 190 L127.9 247.7 A10.29 10.27 0 0 0 137.1 247.7 L252 190"
-      ></path>
+      ></path> */}
 
       <path
         stroke="#3E3E44"
         strokeLinecap="round"
         strokeWidth="0.5"
-        d="M32.9 170 L127.9 217.7 A10.29 10.27 0 0 0 137.1 217.7 L232.1 170"
+        d="M32.9 170 L127.9 217.8 A10.29 10.27 0 0 0 137.1 217.7 L232.1 170"
       ></path>
 
       <path
@@ -48,7 +48,7 @@ function StackIllustration() {
         stroke="#D0D6E0"
         strokeWidth="0.5"
         strokeLinecap="round"
-        d="M132.5 70 L252 190 L132.5 250 L13 190 Z"
+        d="M132.5 70.5 L252.101 190 L132.1 250 L13 190 Z"
       ></path>
     </svg>
   );

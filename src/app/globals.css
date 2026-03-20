@@ -98,6 +98,8 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --selection: oklch(0.87 0 0);
+  --selection-foreground: oklch(0.205 0 0);
 }
 
 .dark {
@@ -193,3 +195,5 @@
     content: "...";
   }
 }
+
+@apply selection:bg-(--selection) selection:text-(--selection-foreground);
