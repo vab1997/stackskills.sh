@@ -33,9 +33,9 @@ export function SignInButton() {
       aria-busy={isLoading}
     >
       {isLoading ? (
-        <Loader className="size-5" />
+        <Loader className="size-4" />
       ) : (
-        <Github className="size-5" />
+        <Github className="size-4" />
       )}
       Sign in with GitHub
     </Button>
