@@ -1,6 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SelectRepo } from "@/features/skills/components/select-repo";
 import { TextAreaInput } from "@/features/skills/components/text-area-input";
+import { cn } from "@/lib/utils";
 import { FileJson, GitBranch } from "lucide-react";
 import { toast } from "sonner";
 import { useGetRepositories } from "../hooks/use-get-repositories";
@@ -15,12 +16,14 @@ interface DependencyInputProps {
   }) => void;
   disabledButtonAnalyze: boolean;
   hasRepoAccess: boolean;
+  disableTabs: boolean;
 }
 
 export function DependencyInput({
   onSubmit,
   disabledButtonAnalyze,
   hasRepoAccess,
+  disableTabs,
 }: DependencyInputProps) {
   const { isExecutingGetRepositories, resultGetRepositories } =
     useGetRepositories({ hasRepoAccess });
@@ -53,10 +56,13 @@ export function DependencyInput({
 
   return (
     <Tabs defaultValue="repository" className="w-full">
-      <TabsList className="bg-muted/50 w-full">
+      <TabsList
+        className={cn("bg-muted/50 w-full", disableTabs ? "opacity-60" : "")}
+      >
         <TabsTrigger
           value="repository"
           className="text-muted-foreground flex-1 gap-2"
+          disabled={disableTabs}
         >
           <GitBranch className="size-3.5" />
           From repository
@@ -65,28 +71,33 @@ export function DependencyInput({
         <TabsTrigger
           value="paste"
           className="text-muted-foreground flex-1 gap-2"
+          disabled={disableTabs}
         >
           <FileJson className="size-3.5" />
           Paste package.json
         </TabsTrigger>
       </TabsList>
 
-      <TabsContent value="paste" className="mt-4">
-        <TextAreaInput
-          disabledButtonAnalyze={disabledButtonAnalyze}
-          onSubmit={handleManualPackageJsonsSubmit}
-        />
-      </TabsContent>
+      {!disableTabs ? (
+        <>
+          <TabsContent value="paste" className="mt-4">
+            <TextAreaInput
+              disabledButtonAnalyze={disabledButtonAnalyze}
+              onSubmit={handleManualPackageJsonsSubmit}
+            />
+          </TabsContent>
 
-      <TabsContent value="repository" className="mt-4">
-        <SelectRepo
-          hasRepoAccess={hasRepoAccess}
-          repositories={resultGetRepositories}
-          isLoadingRepositories={isExecutingGetRepositories}
-          disabledButtonAnalyze={disabledButtonAnalyze}
-          onSubmit={handleSelectedRepoSubmit}
-        />
-      </TabsContent>
+          <TabsContent value="repository" className="mt-4">
+            <SelectRepo
+              hasRepoAccess={hasRepoAccess}
+              repositories={resultGetRepositories}
+              isLoadingRepositories={isExecutingGetRepositories}
+              disabledButtonAnalyze={disabledButtonAnalyze}
+              onSubmit={handleSelectedRepoSubmit}
+            />
+          </TabsContent>
+        </>
+      ) : null}
     </Tabs>
   );
 }

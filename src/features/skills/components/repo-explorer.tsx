@@ -23,7 +23,7 @@ export function RepoExplorer({
   user,
 }: {
   hasRepoAccess: boolean;
-  user: User;
+  user?: User;
 }) {
   const [currentStep, setCurrentStep] = useState(0);
   const [lastPackageJsons, setLastPackageJsons] = useState<string[]>([]);
@@ -124,6 +124,7 @@ export function RepoExplorer({
           onSubmit={handleGetSkills}
           disabledButtonAnalyze={currentStep > 0}
           hasRepoAccess={hasRepoAccess}
+          disableTabs={!user}
         />
       </section>
 
@@ -131,11 +132,13 @@ export function RepoExplorer({
       <section
         className={cn(
           "rounded-xl border p-6 transition-all duration-300",
-          currentStep === 1
+          !user
             ? "opacity-100"
-            : currentStep > 1
-              ? "opacity-60"
-              : "pointer-events-none opacity-40",
+            : currentStep === 1
+              ? "opacity-100"
+              : currentStep > 1
+                ? "opacity-60"
+                : "pointer-events-none opacity-40",
         )}
       >
         <div className="mb-4 flex items-center gap-3">
@@ -163,7 +166,13 @@ export function RepoExplorer({
       <section
         className={cn(
           "border-border rounded-xl border p-6 transition-all duration-300",
-          currentStep === 2 ? "opacity-100" : "pointer-events-none opacity-40",
+          !user
+            ? "opacity-100"
+            : currentStep === 2
+              ? "opacity-100"
+              : currentStep > 2
+                ? "opacity-60"
+                : "pointer-events-none opacity-40",
         )}
       >
         <div className="mb-4 flex items-center gap-3">
