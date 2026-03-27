@@ -14,7 +14,7 @@ export const auth = betterAuth({
     github: {
       clientId: config.GITHUB_CLIENT_ID,
       clientSecret: config.GITHUB_CLIENT_SECRET,
-      scope: ["read:user", "user:email"],
+      scope: ["read:user", "user:email", "public_repo"],
     },
   },
   plugins: [nextCookies()],

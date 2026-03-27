@@ -1,12 +1,10 @@
 "use server";
 
-import { getSessionUser } from "@/features/auth/server";
 import { getGithubToken } from "@/features/skills/services";
 import type { GithubRepo } from "@/features/skills/types";
 import { CACHE_TAGS, GITHUB_API_URL } from "@/lib/constants";
-import { actionClient } from "@/lib/safe-action";
 
-async function getRepositories(token: string) {
+async function getRepositoriesFromGithub({ token }: { token: string }) {
   "use cache";
   const response = await fetch(
     `${GITHUB_API_URL}/user/repos?per_page=100&sort=updated&type=owner`,
@@ -29,20 +27,14 @@ async function getRepositories(token: string) {
   return (await response.json()) as GithubRepo[];
 }
 
-export const getRepositoriesAction = actionClient.action(async () => {
-  const session = await getSessionUser();
-
-  if (!session.user) {
-    throw new Error("Unauthorized");
-  }
-
-  const token = await getGithubToken(session.user.id);
+export async function getRepositories({ userId }: { userId: string }) {
+  const token = await getGithubToken(userId);
 
   if (!token) {
     throw new Error("No GitHub token found");
   }
 
-  const repos = await getRepositories(token);
+  const repos = await getRepositoriesFromGithub({ token });
 
   const filtered: GithubRepo[] = repos.map((repo: GithubRepo) => ({
     id: repo.id,
@@ -54,4 +46,4 @@ export const getRepositoriesAction = actionClient.action(async () => {
   }));
 
   return filtered;
-});
+}

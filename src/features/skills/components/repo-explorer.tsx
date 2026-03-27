@@ -11,6 +11,7 @@ import { User } from "better-auth/types";
 import { Package, RotateCcw, Search, Sparkles, Zap } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { GithubRepo } from "../types";
 
 const STEPS = [
   { label: "Dependencies", description: "Add your source" },
@@ -19,11 +20,11 @@ const STEPS = [
 ];
 
 export function RepoExplorer({
-  hasRepoAccess,
   user,
+  repositories,
 }: {
-  hasRepoAccess: boolean;
   user?: User;
+  repositories?: GithubRepo[] | null;
 }) {
   const [currentStep, setCurrentStep] = useState(0);
   const [lastPackageJsons, setLastPackageJsons] = useState<string[]>([]);
@@ -123,8 +124,8 @@ export function RepoExplorer({
           key={resetKey}
           onSubmit={handleGetSkills}
           disabledButtonAnalyze={currentStep > 0}
-          hasRepoAccess={hasRepoAccess}
           disableTabs={!user}
+          repositories={repositories}
         />
       </section>
 

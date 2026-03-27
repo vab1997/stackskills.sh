@@ -2,11 +2,7 @@ import { getRepositoriesAction } from "@/features/skills/actions/get-repositorie
 import { useSafeAction } from "@/hooks/use-safe-action";
 import { useEffect } from "react";
 
-export function useGetRepositories({
-  hasRepoAccess,
-}: {
-  hasRepoAccess: boolean;
-}) {
+export function useGetRepositories() {
   const {
     executeAsync: executeGetRepositories,
     isExecuting: isExecutingGetRepositories,
@@ -14,10 +10,8 @@ export function useGetRepositories({
   } = useSafeAction(getRepositoriesAction, { showToast: false });
 
   useEffect(() => {
-    if (hasRepoAccess) {
-      executeGetRepositories({});
-    }
-  }, [hasRepoAccess, executeGetRepositories]);
+    executeGetRepositories({});
+  }, [executeGetRepositories]);
 
   return {
     isExecutingGetRepositories,

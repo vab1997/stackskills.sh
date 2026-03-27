@@ -14,23 +14,18 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useGetPackagejson } from "@/features/skills/hooks/use-get-package-json";
-import { useRequestRepoAccess } from "@/features/skills/hooks/use-request-repo-access";
-import { Github, Info, Package } from "lucide-react";
+import { Info, Package } from "lucide-react";
 import { useState } from "react";
 import ShikiHighlighter from "react-shiki";
 import { toast } from "sonner";
 import { GithubRepo } from "../types";
 
 export function SelectRepo({
-  hasRepoAccess,
   repositories,
-  isLoadingRepositories,
   disabledButtonAnalyze,
   onSubmit,
 }: {
-  hasRepoAccess: boolean;
-  repositories?: GithubRepo[];
-  isLoadingRepositories: boolean;
+  repositories?: GithubRepo[] | null;
   disabledButtonAnalyze: boolean;
   onSubmit: ({ packageJson }: { packageJson: string }) => void;
 }) {
@@ -38,8 +33,6 @@ export function SelectRepo({
 
   const { fetchPackageJson, isExecutingGetPackageJson, resultGetPackageJson } =
     useGetPackagejson();
-  const { requestRepoAccess, isExecutingRequestRepoAccess } =
-    useRequestRepoAccess();
 
   const handleSelectedRepo = async (value: string) => {
     try {
@@ -65,74 +58,51 @@ export function SelectRepo({
         GitHub repository URL
       </label>
 
-      {hasRepoAccess ? (
-        isLoadingRepositories ? (
-          <div className="flex items-center gap-2 text-white/60">
-            <Loader className="size-4" />
-            <span>Loading repositories...</span>
-          </div>
-        ) : (
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-2">
-              <Label
-                htmlFor="repo-select"
-                className="text-muted-foreground ml-0.5 flex items-center gap-1.5 text-sm"
-              >
-                Select a repository
-              </Label>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className="size-3.5 opacity-50" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  If you are working in a monorepo, switch to the “Paste” tab
-                  and paste the `package.json` files from each package so we can
-                  analyze them all together.
-                </TooltipContent>
-              </Tooltip>
-            </div>
-            <Select
-              value={selectedRepo}
-              onValueChange={handleSelectedRepo}
-              name="repo-select"
-            >
-              <SelectTrigger className="w-full border-white/10 bg-white/5">
-                <SelectValue placeholder="Select a repository" />
-              </SelectTrigger>
-              <SelectContent>
-                {repositories &&
-                  repositories.map((repo) => (
-                    <SelectItem key={repo.id} value={repo.full_name}>
-                      <span className="flex items-center gap-2">
-                        {repo.private ? "🔒" : "📂"} {repo.full_name}
-                      </span>
-                    </SelectItem>
-                  ))}
-              </SelectContent>
-            </Select>
-          </div>
-        )
+      {repositories && repositories.length === 0 ? (
+        <div className="flex items-center gap-2 text-white/60">
+          <Loader className="size-4" />
+          <span>No repositories found</span>
+        </div>
       ) : (
-        <Button
-          onClick={requestRepoAccess}
-          type="button"
-          variant="outline"
-          size="icon"
-          className="w-fit gap-1 px-2 active:scale-[0.97]"
-          disabled={isExecutingRequestRepoAccess}
-        >
-          {isExecutingRequestRepoAccess ? (
-            <>
-              <Loader className="size-4" />
-              Connecting GitHub Repositories...
-            </>
-          ) : (
-            <>
-              <Github className="size-4" />
-              Connect GitHub Repositories
-            </>
-          )}
-        </Button>
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <Label
+              htmlFor="repo-select"
+              className="text-muted-foreground ml-0.5 flex items-center gap-1.5 text-sm"
+            >
+              Select a repository
+            </Label>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Info className="size-3.5 opacity-50" />
+              </TooltipTrigger>
+              <TooltipContent>
+                If you are working in a monorepo, switch to the
+                &quot;Paste&quot; tab and paste the package.json files from each
+                package so we can analyze them all together.
+              </TooltipContent>
+            </Tooltip>
+          </div>
+          <Select
+            value={selectedRepo}
+            onValueChange={handleSelectedRepo}
+            name="repo-select"
+          >
+            <SelectTrigger className="w-full border-white/10 bg-white/5">
+              <SelectValue placeholder="Select a repository" />
+            </SelectTrigger>
+            <SelectContent>
+              {repositories &&
+                repositories.map((repo) => (
+                  <SelectItem key={repo.id} value={repo.full_name}>
+                    <span className="flex items-center gap-2">
+                      {repo.private ? "🔒" : "📂"} {repo.full_name}
+                    </span>
+                  </SelectItem>
+                ))}
+            </SelectContent>
+          </Select>
+        </div>
       )}
 
       {isExecutingGetPackageJson && (

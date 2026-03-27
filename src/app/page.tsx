@@ -5,23 +5,24 @@ import { HeaderSkeleton } from "@/components/skeletons/header-skeleton";
 import { RepoExplorerSkeleton } from "@/components/skeletons/repo-explorer-skeleton";
 import { getSessionUser } from "@/features/auth/server";
 import { RepoExplorer } from "@/features/skills/components/repo-explorer";
-import { hasRepoScope } from "@/features/skills/services";
+import { getRepositories } from "@/features/skills/services/get-repositories";
 import { Suspense } from "react";
 
 async function WrapperSection() {
   const sessionPromise = getSessionUser();
-  const hasRepoAccessPromise = sessionPromise.then((session) =>
-    session.user ? hasRepoScope(session.user.id) : false,
-  );
+  const reposPromise = sessionPromise.then((session) => {
+    if (!session?.user?.id) {
+      return null;
+    }
 
-  const [session, hasRepoAccess] = await Promise.all([
-    sessionPromise,
-    hasRepoAccessPromise,
-  ]);
+    return getRepositories({ userId: session.user.id });
+  });
+
+  const [session, repos] = await Promise.all([sessionPromise, reposPromise]);
 
   return (
     <section className="flex w-full flex-col items-center justify-center text-white">
-      <RepoExplorer hasRepoAccess={hasRepoAccess} user={session.user} />
+      <RepoExplorer user={session.user} repositories={repos} />
     </section>
   );
 }

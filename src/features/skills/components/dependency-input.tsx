@@ -4,7 +4,7 @@ import { TextAreaInput } from "@/features/skills/components/text-area-input";
 import { cn } from "@/lib/utils";
 import { FileJson, GitBranch } from "lucide-react";
 import { toast } from "sonner";
-import { useGetRepositories } from "../hooks/use-get-repositories";
+import { GithubRepo } from "../types";
 
 interface DependencyInputProps {
   onSubmit: ({
@@ -15,18 +15,18 @@ interface DependencyInputProps {
     packageJsonFromPaste?: string[];
   }) => void;
   disabledButtonAnalyze: boolean;
-  hasRepoAccess: boolean;
   disableTabs: boolean;
+  repositories?: GithubRepo[] | null;
 }
 
 export function DependencyInput({
+  repositories,
   onSubmit,
   disabledButtonAnalyze,
-  hasRepoAccess,
   disableTabs,
 }: DependencyInputProps) {
-  const { isExecutingGetRepositories, resultGetRepositories } =
-    useGetRepositories({ hasRepoAccess });
+  // const { isExecutingGetRepositories, resultGetRepositories } =
+  //   useGetRepositories();
 
   const handleSelectedRepoSubmit = ({
     packageJson,
@@ -89,9 +89,7 @@ export function DependencyInput({
 
           <TabsContent value="repository" className="mt-4">
             <SelectRepo
-              hasRepoAccess={hasRepoAccess}
-              repositories={resultGetRepositories}
-              isLoadingRepositories={isExecutingGetRepositories}
+              repositories={repositories}
               disabledButtonAnalyze={disabledButtonAnalyze}
               onSubmit={handleSelectedRepoSubmit}
             />
