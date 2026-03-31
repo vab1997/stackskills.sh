@@ -6,6 +6,13 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
@@ -18,6 +25,7 @@ import { cn } from "@/lib/utils";
 import {
   ArrowDownToLine,
   BadgeCheck,
+  Bot,
   Check,
   ChevronDown,
   Copy,
@@ -30,6 +38,41 @@ import {
 } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useMemo, useState } from "react";
+
+const AGENTS = [
+  // Popular — listed first
+  { value: "claude-code", label: "Claude Code" },
+  { value: "cursor", label: "Cursor" },
+  { value: "github-copilot", label: "GitHub Copilot" },
+  { value: "opencode", label: "OpenCode" },
+  { value: "windsurf", label: "Windsurf" },
+  { value: "cline", label: "Cline" },
+  { value: "codex", label: "Codex" },
+  { value: "augment", label: "Augment" },
+  // Rest
+  { value: "amp", label: "Amp" },
+  { value: "antigravity", label: "Antigravity" },
+  { value: "codebuddy", label: "CodeBuddy" },
+  { value: "command-code", label: "Command Code" },
+  { value: "continue", label: "Continue" },
+  { value: "cortex", label: "Cortex Code" },
+  { value: "crush", label: "Crush" },
+  { value: "deepagents", label: "Deep Agents" },
+  { value: "gemini-cli", label: "Gemini CLI" },
+  { value: "goose", label: "Goose" },
+  { value: "junie", label: "Junie" },
+  { value: "kilo", label: "Kilo Code" },
+  { value: "kimi-cli", label: "Kimi Code CLI" },
+  { value: "kiro-cli", label: "Kiro CLI" },
+  { value: "mistral-vibe", label: "Mistral Vibe" },
+  { value: "openclaw", label: "OpenClaw" },
+  { value: "openhands", label: "OpenHands" },
+  { value: "replit", label: "Replit" },
+  { value: "roo", label: "Roo Code" },
+  { value: "trae", label: "Trae" },
+  { value: "warp", label: "Warp" },
+  { value: "zencoder", label: "Zencoder" },
+];
 
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
@@ -214,11 +257,17 @@ function CommandBuilder({
   allSkills,
   onClearAll,
   onRemoveSkill,
+  selectedAgents,
+  onAddAgent,
+  onRemoveAgent,
 }: {
   selectedSkills: Set<string>;
   allSkills: SkillsByDependency;
   onClearAll: () => void;
   onRemoveSkill: ({ name, command }: { name: string; command: string }) => void;
+  selectedAgents: Set<string>;
+  onAddAgent: (value: string) => void;
+  onRemoveAgent: (value: string) => void;
 }) {
   const getSkillNameFromCommand = (command: string) => {
     const parts = command.trim().split(" ");
@@ -228,10 +277,12 @@ function CommandBuilder({
   };
 
   const selectedSkillsData = useMemo(() => {
+    const seen = new Set<string>();
     const result: SkillsApiSkill[] = [];
     for (const skills of Object.values(allSkills)) {
       for (const skill of skills) {
-        if (selectedSkills.has(skill.command)) {
+        if (selectedSkills.has(skill.command) && !seen.has(skill.command)) {
+          seen.add(skill.command);
           result.push(skill);
         }
       }
@@ -239,11 +290,26 @@ function CommandBuilder({
     return result;
   }, [selectedSkills, allSkills]);
 
+  const availableAgents = useMemo(
+    () => AGENTS.filter((a) => !selectedAgents.has(a.value)),
+    [selectedAgents],
+  );
+
+  const selectedAgentsData = useMemo(
+    () => AGENTS.filter((a) => selectedAgents.has(a.value)),
+    [selectedAgents],
+  );
+
   const combinedCommand = useMemo(() => {
     if (selectedSkillsData.length === 0) return "";
-    const commands = selectedSkillsData.map((skill) => skill.command);
-    return commands.join(" && ");
-  }, [selectedSkillsData]);
+    const agentArgs = [...selectedAgents].flatMap((a) => ["-a", a]).join(" ");
+    return selectedSkillsData
+      .map((skill) => {
+        const withNpxY = skill.command.replace(/^npx\s/, "npx -y ");
+        return agentArgs ? `${withNpxY} ${agentArgs} -y` : `${withNpxY} -y`;
+      })
+      .join(" && ");
+  }, [selectedSkillsData, selectedAgents]);
 
   const shouldReduceMotion = useReducedMotion();
 
@@ -282,7 +348,7 @@ function CommandBuilder({
         <div className="border-border flex flex-wrap gap-2 border-b p-3">
           {selectedSkillsData.map((skill) => (
             <Badge
-              key={skill.command}
+              key={skill.id}
               variant="secondary"
               className="border-primary/30 bg-primary/10 text-primary gap-1.5 border pr-1.5 font-mono text-xs"
             >
@@ -297,6 +363,53 @@ function CommandBuilder({
               </button>
             </Badge>
           ))}
+        </div>
+
+        {/* Agent Selector */}
+        <div className="border-border border-b p-3">
+          <div className="flex items-center gap-2">
+            <Bot className="text-muted-foreground size-4 shrink-0" />
+            <Select
+              value=""
+              onValueChange={(val) => {
+                if (val) onAddAgent(val);
+              }}
+            >
+              <SelectTrigger className="h-7 w-48 font-mono text-xs">
+                <SelectValue placeholder="Select an agent" />
+              </SelectTrigger>
+              <SelectContent>
+                {availableAgents.map((agent) => (
+                  <SelectItem
+                    key={agent.value}
+                    value={agent.value}
+                    className="font-mono text-xs"
+                  >
+                    {agent.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          {selectedAgentsData.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {selectedAgentsData.map((agent) => (
+                <Badge
+                  key={agent.value}
+                  variant="secondary"
+                  className="border-primary/30 bg-primary/10 text-primary gap-1.5 border pr-1.5 font-mono text-xs"
+                >
+                  {agent.label}
+                  <button
+                    onClick={() => onRemoveAgent(agent.value)}
+                    className="hover:bg-primary/20 rounded p-0.5 transition-colors"
+                  >
+                    <X className="size-3" />
+                  </button>
+                </Badge>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Command */}
@@ -314,6 +427,7 @@ function CommandBuilder({
 
 export function SkillDisplay({ skills }: { skills: SkillsByDependency }) {
   const [selectedSkills, setSelectedSkills] = useState<Set<string>>(new Set());
+  const [selectedAgents, setSelectedAgents] = useState<Set<string>>(new Set());
 
   const handleToggleSkill = ({ command }: { command: string }) => {
     setSelectedSkills((prev) => {
@@ -335,6 +449,18 @@ export function SkillDisplay({ skills }: { skills: SkillsByDependency }) {
     setSelectedSkills((prev) => {
       const next = new Set(prev);
       next.delete(command);
+      return next;
+    });
+  };
+
+  const handleAddAgent = (value: string) => {
+    setSelectedAgents((prev) => new Set([...prev, value]));
+  };
+
+  const handleRemoveAgent = (value: string) => {
+    setSelectedAgents((prev) => {
+      const next = new Set(prev);
+      next.delete(value);
       return next;
     });
   };
@@ -377,6 +503,9 @@ export function SkillDisplay({ skills }: { skills: SkillsByDependency }) {
             allSkills={skills}
             onClearAll={handleClearAll}
             onRemoveSkill={handleRemoveSkill}
+            selectedAgents={selectedAgents}
+            onAddAgent={handleAddAgent}
+            onRemoveAgent={handleRemoveAgent}
           />
         )}
       </AnimatePresence>

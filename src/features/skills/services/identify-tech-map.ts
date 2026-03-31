@@ -80,6 +80,15 @@ const PACKAGE_MAP = new Map<string, string>([
   ["mobx", "mobx"],
   ["mobx-react-lite", "mobx"],
 
+  // — Forms —
+  ["react-hook-form", "react-hook-form"],
+  ["@tanstack/react-form", "tanstack-form"],
+  ["@tanstack/vue-form", "tanstack-form"],
+  ["formik", "formik"],
+  ["react-final-form", "react-final-form"],
+  ["final-form", "react-final-form"],
+  ["vee-validate", "vee-validate"],
+
   // — Data fetching —
   ["@tanstack/react-query", "react-query"],
   ["@tanstack/vue-query", "react-query"],

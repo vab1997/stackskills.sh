@@ -124,6 +124,10 @@ const TECH_CATEGORIES = [
     techs: ["Zustand", "Jotai", "Recoil", "Valtio", "Redux", "MobX", "Pinia"],
   },
   {
+    name: "Forms",
+    techs: ["React Hook Form", "TanStack Form", "Formik", "React Final Form", "VeeValidate"],
+  },
+  {
     name: "Data Fetching",
     techs: ["React Query", "SWR", "Apollo", "GraphQL"],
   },
