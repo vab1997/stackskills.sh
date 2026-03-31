@@ -1,6 +1,6 @@
 import { getSessionUser } from "@/features/auth/server";
 import { getGithubToken } from "@/features/skills/services";
-import { identifyTechnologies } from "@/features/skills/services/identify-tech";
+import { identifyTechnologiesFromMap } from "@/features/skills/services/identify-tech-map";
 import { searchSkillsByDependency } from "@/features/skills/services/search-skills";
 import type {
   SkillsByDependency,
@@ -70,7 +70,7 @@ export async function POST(request: Request) {
 
         const { dependencies, devDependencies } =
           parsePackageJsons(packageJsons);
-        const technologies = await identifyTechnologies(
+        const technologies = identifyTechnologiesFromMap(
           dependencies,
           devDependencies,
         );
