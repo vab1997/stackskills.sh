@@ -41,27 +41,27 @@ export const metadata: Metadata = {
   metadataBase: new URL(getBaseURL()),
 
   title: {
-    default: "StackSkills — AI Skills for Your Stack",
+    default: "StackSkills — Agent Skills for Your Stack",
     template: "%s | StackSkills",
   },
   description:
-    "Paste your package.json and StackSkills uses AI to surface installable agent skills from skills.sh matched to your exact tech stack.",
+    "Paste your package.json and StackSkills instantly maps your dependencies to the best agent skills from skills.sh matched to your exact tech stack.",
 
   openGraph: {
     type: "website",
     url: "/",
     siteName: "StackSkills",
-    title: "StackSkills — AI Skills for Your Stack",
+    title: "StackSkills — Agent Skills for Your Stack",
     description:
-      "Paste your package.json and StackSkills uses AI to surface installable agent skills from skills.sh matched to your exact tech stack.",
+      "Paste your package.json and StackSkills instantly maps your dependencies to the best agent skills from skills.sh matched to your exact tech stack.",
     images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
   },
 
   twitter: {
     card: "summary_large_image",
-    title: "StackSkills — AI Skills for Your Stack",
+    title: "StackSkills — Agent Skills for Your Stack",
     description:
-      "Paste your package.json and StackSkills uses AI to surface installable agent skills from skills.sh matched to your exact tech stack.",
+      "Paste your package.json and StackSkills instantly maps your dependencies to the best agent skills from skills.sh matched to your exact tech stack.",
     images: ["/opengraph-image"],
     creator: "@victorbejas",
   },
@@ -102,7 +102,7 @@ export default function RootLayout({
               applicationCategory: "DeveloperApplication",
               operatingSystem: "Web",
               description:
-                "AI-powered tool that analyzes package.json dependencies and surfaces installable agent skills from skills.sh matched to your tech stack.",
+                "Tool that maps package.json dependencies to installable agent skills from skills.sh matched to your tech stack.",
               author: {
                 "@type": "Person",
                 name: "Victor Bejas",

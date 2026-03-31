@@ -15,6 +15,19 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+  // CLI package — plain ES modules, no TypeScript
+  {
+    files: ["packages/stackskills/src/**/*.mjs"],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: "module",
+      globals: { process: "readonly", console: "readonly" },
+    },
+    rules: {
+      "no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+      "no-undef": "error",
+    },
+  },
 ]);
 
 export default eslintConfig;

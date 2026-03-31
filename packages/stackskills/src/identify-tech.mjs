@@ -191,7 +191,11 @@ function isModelFallbackError(error) {
   if (RetryError.isInstance(error)) return true;
   if (NoSuchModelError.isInstance(error)) return true;
   if (APICallError.isInstance(error)) return error.isRetryable;
-  if (error instanceof Error && error.cause !== undefined && APICallError.isInstance(error.cause)) {
+  if (
+    error instanceof Error &&
+    error.cause !== undefined &&
+    APICallError.isInstance(error.cause)
+  ) {
     return error.cause.isRetryable;
   }
   return false;
@@ -227,10 +231,14 @@ export async function identifyTechnologies(packages) {
     } catch (error) {
       lastError = error;
       if (isModelFallbackError(error)) {
-        console.warn(`[identify-technologies] model ${model} failed, trying next`);
+        console.warn(
+          `[identify-technologies] model ${model} failed, trying next`,
+        );
         continue;
       }
-      console.error(`[identify-technologies] non-retryable error with model ${model}`);
+      console.error(
+        `[identify-technologies] non-retryable error with model ${model}`,
+      );
       throw error;
     }
   }

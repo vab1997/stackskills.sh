@@ -2,7 +2,7 @@ import { getBaseURL } from "@/lib/get-base-url";
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "StackSkills — AI Skills for Your Stack";
+export const alt = "StackSkills — Agent Skills for Your Stack";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 

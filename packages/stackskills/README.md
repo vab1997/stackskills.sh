@@ -1,6 +1,6 @@
-# stackskillssh
+# stackskills
 
-CLI to discover and install AI agent skills for your tech stack.
+CLI to discover and install agent skills for your tech stack.
 
 Reads your `package.json`, identifies the technologies in your stack, finds the most popular [skills.sh](https://skills.sh) skills for each technology, and installs them into your coding agent of choice — all in one interactive command.
 
@@ -9,7 +9,7 @@ Reads your `package.json`, identifies the technologies in your stack, finds the 
 Run it from the root of any Node.js project:
 
 ```bash
-npx stackskillssh
+npx stackskills
 ```
 
 No global installation required. No API key needed.
@@ -44,15 +44,15 @@ package.json  →  map detection  →  skills.sh search  →  select  →  insta
 
 In addition to the skills found for your detected stack, the CLI always shows a `⭐ curated` group with high-value skills:
 
-| Skill | Condition | Source |
-|---|---|---|
-| `nextjs-caching` | `next` in deps | goncy/nextjs-skills |
-| `nextjs-rendering` | `next` in deps | goncy/nextjs-skills |
-| `nextjs-navigation` | `next` in deps | goncy/nextjs-skills |
-| `performance` | always | addyosmani/web-quality-skills |
-| `accessibility` | always | addyosmani/web-quality-skills |
-| `core-web-vitals` | always | addyosmani/web-quality-skills |
-| `best-practices` | always | addyosmani/web-quality-skills |
+| Skill               | Condition      | Source                        |
+| ------------------- | -------------- | ----------------------------- |
+| `nextjs-caching`    | `next` in deps | goncy/nextjs-skills           |
+| `nextjs-rendering`  | `next` in deps | goncy/nextjs-skills           |
+| `nextjs-navigation` | `next` in deps | goncy/nextjs-skills           |
+| `performance`       | always         | addyosmani/web-quality-skills |
+| `accessibility`     | always         | addyosmani/web-quality-skills |
+| `core-web-vitals`   | always         | addyosmani/web-quality-skills |
+| `best-practices`    | always         | addyosmani/web-quality-skills |
 
 Curated skills are fetched live from skills.sh so install counts are always fresh.
 

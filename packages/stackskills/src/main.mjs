@@ -1,6 +1,3 @@
-import { readFileSync } from "node:fs";
-import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
 import {
   cancel,
   groupMultiselect,
@@ -12,8 +9,14 @@ import {
   outro,
   spinner,
 } from "@clack/prompts";
+import { readFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { AGENTS } from "./agents.mjs";
-import { identifyTechnologiesFromMap, searchCuratedSkills } from "./identify-tech-map.mjs";
+import {
+  identifyTechnologiesFromMap,
+  searchCuratedSkills,
+} from "./identify-tech-map.mjs";
 import { installAll } from "./install-skills.mjs";
 import { mergeDependencies } from "./merge-dependencies.mjs";
 import { searchSkillsForTechnologies } from "./search-skills.mjs";
@@ -34,7 +37,9 @@ const { version } = JSON.parse(
 
 async function main() {
   console.log("\n" + LOGO_LINES.join("\n"));
-  intro(`stackskills.sh v${version} — Discover AI agent skills for your tech stack`);
+  intro(
+    `stackskills.sh v${version} — Discover AI agent skills for your tech stack`,
+  );
 
   const pkgPath = resolve(process.cwd(), "package.json");
   let pkg;
@@ -102,10 +107,15 @@ async function main() {
     process.exit(0);
   }
 
-  log.step(`Installing ${selected.length} skill(s) to ${selectedAgents.length} agent(s)...`);
+  log.step(
+    `Installing ${selected.length} skill(s) to ${selectedAgents.length} agent(s)...`,
+  );
   console.log("");
 
-  const { installed, failed, errors } = await installAll(selected, selectedAgents);
+  const { installed, failed, errors } = await installAll(
+    selected,
+    selectedAgents,
+  );
 
   console.log("");
 

@@ -7,10 +7,10 @@ import { CopyButton } from "./copy-button";
 export const metadata: Metadata = {
   title: "CLI",
   description:
-    "Run npx stackskillssh to discover and install AI agent skills for your tech stack in seconds.",
+    "Run npx stackskills to discover and install agent skills for your tech stack in seconds.",
 };
 
-const COMMAND = "npx stackskillssh";
+const COMMAND = "npx stackskills";
 
 const STEPS = [
   {
@@ -18,7 +18,7 @@ const STEPS = [
     description: (
       <>
         From your project root, run{" "}
-        <code className="text-foreground font-mono">npx stackskillssh</code>. No
+        <code className="text-foreground font-mono">npx stackskills</code>. No
         global install needed.
       </>
     ),
@@ -125,7 +125,13 @@ const TECH_CATEGORIES = [
   },
   {
     name: "Forms",
-    techs: ["React Hook Form", "TanStack Form", "Formik", "React Final Form", "VeeValidate"],
+    techs: [
+      "React Hook Form",
+      "TanStack Form",
+      "Formik",
+      "React Final Form",
+      "VeeValidate",
+    ],
   },
   {
     name: "Data Fetching",

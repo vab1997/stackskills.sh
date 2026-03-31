@@ -1,10 +1,10 @@
 {
-  "name": "stackskillssh",
+  "name": "stackskills",
   "version": "0.1.0",
-  "description": "CLI to discover and install AI agent skills for your tech stack",
+  "description": "CLI to discover and install agent skills for your tech stack",
   "type": "module",
   "bin": {
-    "stackskillssh": "./src/main.mjs"
+    "stackskills": "./src/main.mjs"
   },
   "scripts": {
     "dev": "node src/main.mjs"
@@ -39,6 +39,6 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@clack/prompts": "^1.1.0"
+    "@clack/prompts": "1.1.0"
   }
 }

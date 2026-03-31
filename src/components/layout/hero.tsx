@@ -23,15 +23,16 @@ export function Hero() {
 
         <p className="text-center font-mono text-[15px] font-medium tracking-tight uppercase lg:text-left lg:text-[19px]">
           <AnimatedShinyText>
-            Discover AI agent skills for your tech stack
+            Discover agent skills for your tech stack
           </AnimatedShinyText>
         </p>
       </div>
 
       <div>
         <p className="text-muted-foreground font-geist-sans mt-2 text-center text-xl leading-tight tracking-tight text-pretty sm:text-2xl lg:text-left lg:text-3xl">
-          Paste your package.json — StackSkills uses AI to surface installable
-          agent skills from skills.sh matched to your exact tech stack.
+          Paste your package.json — StackSkills instantly maps your dependencies
+          to the best agent skills from skills.sh matched to your exact tech
+          stack.
         </p>
       </div>
     </div>

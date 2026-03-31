@@ -134,10 +134,10 @@ export const CURATED_SKILLS = [
   ["next", "nextjs-caching"],
   ["next", "nextjs-rendering"],
   ["next", "nextjs-navigation"],
-  [null, "performance",     "addyosmani/web-quality-skills"],
-  [null, "accessibility",   "addyosmani/web-quality-skills"],
+  [null, "performance", "addyosmani/web-quality-skills"],
+  [null, "accessibility", "addyosmani/web-quality-skills"],
   [null, "core-web-vitals", "addyosmani/web-quality-skills"],
-  [null, "best-practices",  "addyosmani/web-quality-skills"],
+  [null, "best-practices", "addyosmani/web-quality-skills"],
 ];
 
 export function identifyTechnologiesFromMap(packages) {
@@ -160,7 +160,9 @@ export async function searchCuratedSkills(packages) {
   const results = await Promise.all(
     filtered.map(async ([, skillName, source]) => {
       const { skills } = await searchSkillsByTechnology(skillName);
-      return source ? (skills.find((s) => s.source === source) ?? null) : (skills[0] ?? null);
+      return source
+        ? (skills.find((s) => s.source === source) ?? null)
+        : (skills[0] ?? null);
     }),
   );
   return results.filter(Boolean);

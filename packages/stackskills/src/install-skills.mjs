@@ -1,5 +1,13 @@
 import { spawn } from "node:child_process";
-import { cyan, dim, green, HIDE_CURSOR, red, SHOW_CURSOR, SPINNER } from "./colors.mjs";
+import {
+  cyan,
+  dim,
+  green,
+  HIDE_CURSOR,
+  red,
+  SHOW_CURSOR,
+  SPINNER,
+} from "./colors.mjs";
 
 const CONCURRENCY = 3;
 
@@ -18,10 +26,16 @@ export function installSkill(skill, agents = []) {
     });
 
     let output = "";
-    child.stdout?.on("data", (d) => { output += d.toString(); });
-    child.stderr?.on("data", (d) => { output += d.toString(); });
+    child.stdout?.on("data", (d) => {
+      output += d.toString();
+    });
+    child.stderr?.on("data", (d) => {
+      output += d.toString();
+    });
     child.on("close", (code) => resolve({ success: code === 0, output }));
-    child.on("error", (err) => resolve({ success: false, output: err.message }));
+    child.on("error", (err) =>
+      resolve({ success: false, output: err.message }),
+    );
   });
 }
 
@@ -52,13 +66,17 @@ export async function installAll(skills, agents = []) {
           process.stdout.write(dim(`   ◌ ${state.name}`) + "\n");
           break;
         case "installing":
-          process.stdout.write(cyan(`   ${SPINNER[frame]}`) + ` ${state.name}...\n`);
+          process.stdout.write(
+            cyan(`   ${SPINNER[frame]}`) + ` ${state.name}...\n`,
+          );
           break;
         case "success":
           process.stdout.write(green(`   ✔ ${state.name}`) + "\n");
           break;
         case "failed":
-          process.stdout.write(red(`   ✘ ${state.name}`) + dim(" — failed") + "\n");
+          process.stdout.write(
+            red(`   ✘ ${state.name}`) + dim(" — failed") + "\n",
+          );
           break;
       }
     }
