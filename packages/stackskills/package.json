@@ -1,6 +1,6 @@
 {
   "name": "stackskills",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "CLI to discover and install agent skills for your tech stack",
   "type": "module",
   "bin": {

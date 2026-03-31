@@ -9,7 +9,7 @@ import {
   SPINNER,
 } from "./colors.mjs";
 
-const CONCURRENCY = 3;
+const CONCURRENCY = 5;
 
 export function getNpxCommand() {
   return process.platform === "win32" ? "npx.cmd" : "npx";

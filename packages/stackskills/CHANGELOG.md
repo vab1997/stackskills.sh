@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.1] - 2026-03-31
+
+### Fixed
+
+- Improved error output when a skill fails to install — now shows only the relevant error message instead of the full CLI output
+- Increased concurrent installations from 3 to 5
+
 ## [0.1.0] - 2026-03-31
 
 ### Added

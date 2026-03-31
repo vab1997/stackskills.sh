@@ -122,7 +122,18 @@ async function main() {
 
   if (errors.length > 0) {
     for (const { name, output } of errors) {
-      log.warn(`${name} failed:\n${output.trim()}`);
+      const clean = output.replace(/\x1b\[[0-9;]*m/g, "");
+      const reason =
+        clean
+          .split("\n")
+          .map((l) => l.trim())
+          .find(
+            (l) =>
+              l.startsWith("No matching") ||
+              l.startsWith("Error") ||
+              l.startsWith("error"),
+          ) ?? "installation failed";
+      log.warn(`${name}: ${reason}`);
     }
   }
 
