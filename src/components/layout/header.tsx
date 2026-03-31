@@ -1,12 +1,7 @@
-import { DropdownUserMenu } from "@/features/auth/components/dropdown-user-menu";
-import { SignInButton } from "@/features/auth/components/sign-in-button";
-import { getSessionUser } from "@/features/auth/server";
 import { links } from "@/lib/links";
 import Link from "next/link";
 
 export async function Header() {
-  const session = await getSessionUser();
-  const user = session.user;
   return (
     <header
       className="bg-background sticky top-0 z-50"
@@ -22,9 +17,13 @@ export async function Header() {
           </Link>
         </div>
 
-        <div className="flex items-center gap-2">
-          {user && <DropdownUserMenu user={user} />}
-          {!user && <SignInButton />}
+        <div className="flex items-center gap-2 text-white">
+          <Link
+            href={links.home}
+            className="font-jersey-15 text-2xl font-medium tracking-tight uppercase"
+          >
+            [ try cli ]
+          </Link>
         </div>
       </div>
     </header>

@@ -124,7 +124,7 @@ export function RepoExplorer({
           key={resetKey}
           onSubmit={handleGetSkills}
           disabledButtonAnalyze={currentStep > 0}
-          disableTabs={!user}
+          disableRepositoryTab={!user}
           repositories={repositories}
         />
       </section>
@@ -133,13 +133,11 @@ export function RepoExplorer({
       <section
         className={cn(
           "rounded-xl border p-6 transition-all duration-300",
-          !user
+          currentStep === 1
             ? "opacity-100"
-            : currentStep === 1
-              ? "opacity-100"
-              : currentStep > 1
-                ? "opacity-60"
-                : "pointer-events-none opacity-40",
+            : currentStep > 1
+              ? "opacity-60"
+              : "pointer-events-none opacity-40",
         )}
       >
         <div className="mb-4 flex items-center gap-3">
@@ -154,26 +152,22 @@ export function RepoExplorer({
           </div>
         </div>
 
-        {user ? (
-          <AnalysisSectionBody
-            streamState={streamState}
-            onRetry={handleRetry}
-            onReset={handleReset}
-          />
-        ) : null}
+        <AnalysisSectionBody
+          streamState={streamState}
+          onRetry={handleRetry}
+          onReset={handleReset}
+        />
       </section>
 
       {/* Step 3: Skills */}
       <section
         className={cn(
           "border-border rounded-xl border p-6 transition-all duration-300",
-          !user
+          currentStep === 2
             ? "opacity-100"
-            : currentStep === 2
-              ? "opacity-100"
-              : currentStep > 2
-                ? "opacity-60"
-                : "pointer-events-none opacity-40",
+            : currentStep > 2
+              ? "opacity-60"
+              : "pointer-events-none opacity-40",
         )}
       >
         <div className="mb-4 flex items-center gap-3">
@@ -202,12 +196,12 @@ export function RepoExplorer({
         </div>
         {skillCount > 0 ? (
           <SkillDisplay skills={skills} />
-        ) : user ? (
+        ) : (
           <div className="text-muted-foreground flex flex-col items-center justify-center py-12">
             <Zap className="mb-3 size-8 opacity-40" />
             <p className="text-sm">Skills will appear after analysis...</p>
           </div>
-        ) : null}
+        )}
       </section>
     </div>
   );

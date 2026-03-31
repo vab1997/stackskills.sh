@@ -1,7 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { SignInButton } from "@/features/auth/components/sign-in-button";
 import { SelectRepo } from "@/features/skills/components/select-repo";
 import { TextAreaInput } from "@/features/skills/components/text-area-input";
-import { cn } from "@/lib/utils";
 import { FileJson, GitBranch } from "lucide-react";
 import { toast } from "sonner";
 import { GithubRepo } from "../types";
@@ -15,7 +15,7 @@ interface DependencyInputProps {
     packageJsonFromPaste?: string[];
   }) => void;
   disabledButtonAnalyze: boolean;
-  disableTabs: boolean;
+  disableRepositoryTab: boolean;
   repositories?: GithubRepo[] | null;
 }
 
@@ -23,11 +23,8 @@ export function DependencyInput({
   repositories,
   onSubmit,
   disabledButtonAnalyze,
-  disableTabs,
+  disableRepositoryTab,
 }: DependencyInputProps) {
-  // const { isExecutingGetRepositories, resultGetRepositories } =
-  //   useGetRepositories();
-
   const handleSelectedRepoSubmit = ({
     packageJson,
   }: {
@@ -55,47 +52,47 @@ export function DependencyInput({
   };
 
   return (
-    <Tabs defaultValue="repository" className="w-full">
-      <TabsList
-        className={cn("bg-muted/50 w-full", disableTabs ? "opacity-60" : "")}
-      >
-        <TabsTrigger
-          value="repository"
-          className="text-muted-foreground flex-1 gap-2"
-          disabled={disableTabs}
-        >
-          <GitBranch className="size-3.5" />
-          From repository
-        </TabsTrigger>
-
+    <Tabs defaultValue="paste" className="w-full">
+      <TabsList className="bg-muted/50 w-full">
         <TabsTrigger
           value="paste"
           className="text-muted-foreground flex-1 gap-2"
-          disabled={disableTabs}
         >
           <FileJson className="size-3.5" />
           Paste package.json
         </TabsTrigger>
+        <TabsTrigger
+          value="repository"
+          className="text-muted-foreground flex-1 gap-2"
+        >
+          <GitBranch className="size-3.5" />
+          From repository
+        </TabsTrigger>
       </TabsList>
 
-      {!disableTabs ? (
-        <>
-          <TabsContent value="paste" className="mt-4">
-            <TextAreaInput
-              disabledButtonAnalyze={disabledButtonAnalyze}
-              onSubmit={handleManualPackageJsonsSubmit}
-            />
-          </TabsContent>
+      <TabsContent value="paste" className="mt-4">
+        <TextAreaInput
+          disabledButtonAnalyze={disabledButtonAnalyze}
+          onSubmit={handleManualPackageJsonsSubmit}
+        />
+      </TabsContent>
 
-          <TabsContent value="repository" className="mt-4">
-            <SelectRepo
-              repositories={repositories}
-              disabledButtonAnalyze={disabledButtonAnalyze}
-              onSubmit={handleSelectedRepoSubmit}
-            />
-          </TabsContent>
-        </>
-      ) : null}
+      <TabsContent value="repository" className="mt-4">
+        {disableRepositoryTab ? (
+          <div className="flex flex-col items-center gap-3 py-8">
+            <p className="text-muted-foreground text-sm">
+              Sign in to access your public repositories
+            </p>
+            <SignInButton />
+          </div>
+        ) : (
+          <SelectRepo
+            repositories={repositories}
+            disabledButtonAnalyze={disabledButtonAnalyze}
+            onSubmit={handleSelectedRepoSubmit}
+          />
+        )}
+      </TabsContent>
     </Tabs>
   );
 }

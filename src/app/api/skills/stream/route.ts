@@ -1,5 +1,3 @@
-import { getSessionUser } from "@/features/auth/server";
-import { getGithubToken } from "@/features/skills/services";
 import { identifyTechnologiesFromMap } from "@/features/skills/services/identify-tech-map";
 import { searchSkillsByDependency } from "@/features/skills/services/search-skills";
 import type {
@@ -32,20 +30,6 @@ export function parsePackageJsons(packageJsons: string[]): {
 }
 
 export async function POST(request: Request) {
-  const session = await getSessionUser();
-  if (!session.user) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401,
-    });
-  }
-
-  const token = await getGithubToken(session.user.id);
-  if (!token) {
-    return new Response(JSON.stringify({ error: "No GitHub token found" }), {
-      status: 401,
-    });
-  }
-
   let packageJsons: string[];
   try {
     const body = await request.json();
@@ -98,7 +82,6 @@ export async function POST(request: Request) {
             ) {
               throw err;
             }
-            // single failed fetch — continue with 0 skills for this technology
             logger.error(
               { err, technology },
               "Failed to fetch skills for technology",

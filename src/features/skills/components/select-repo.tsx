@@ -13,6 +13,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { SignOutButton } from "@/features/auth/components/sign-out-button";
 import { useGetPackagejson } from "@/features/skills/hooks/use-get-package-json";
 import { Info, Package } from "lucide-react";
 import { useState } from "react";
@@ -65,23 +66,28 @@ export function SelectRepo({
         </div>
       ) : (
         <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-2">
-            <Label
-              htmlFor="repo-select"
-              className="text-muted-foreground ml-0.5 flex items-center gap-1.5 text-sm"
-            >
-              Select a repository
-            </Label>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Info className="size-3.5 opacity-50" />
-              </TooltipTrigger>
-              <TooltipContent>
-                If you are working in a monorepo, switch to the
-                &quot;Paste&quot; tab and paste the package.json files from each
-                package so we can analyze them all together.
-              </TooltipContent>
-            </Tooltip>
+          <div className="flex w-full items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <Label
+                htmlFor="repo-select"
+                className="text-muted-foreground ml-0.5 flex items-center gap-1.5 text-sm"
+              >
+                Select a repository
+              </Label>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info className="size-3.5 opacity-50" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  If you are working in a monorepo, switch to the
+                  &quot;Paste&quot; tab and paste the package.json files from
+                  each package so we can analyze them all together.
+                </TooltipContent>
+              </Tooltip>
+            </div>
+            <div>
+              <SignOutButton />
+            </div>
           </div>
           <Select
             value={selectedRepo}
