@@ -4,15 +4,22 @@
   "description": "CLI to discover and install agent skills for your tech stack",
   "type": "module",
   "bin": {
-    "stackskills": "./src/main.mjs"
+    "stackskills": "src/main.mjs"
   },
   "scripts": {
     "dev": "node src/main.mjs"
   },
   "files": [
-    "src",
+    "src/agents.mjs",
+    "src/colors.mjs",
+    "src/identify-tech-map.mjs",
+    "src/install-skills.mjs",
+    "src/main.mjs",
+    "src/merge-dependencies.mjs",
+    "src/search-skills.mjs",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "CHANGELOG.md"
   ],
   "keywords": [
     "ai",
@@ -30,7 +37,7 @@
   "homepage": "https://stackskills.sh/cli",
   "repository": {
     "type": "git",
-    "url": "https://github.com/vab1997/stackskills.sh"
+    "url": "git+https://github.com/vab1997/stackskills.sh.git"
   },
   "bugs": {
     "url": "https://github.com/vab1997/stackskills.sh/issues/new/choose"
