@@ -138,9 +138,6 @@ importers:
       ai:
         specifier: ^6.0.116
         version: 6.0.116(zod@3.25.76)
-      dotenv:
-        specifier: ^16.5.0
-        version: 16.6.1
       zod:
         specifier: ^3.25.0
         version: 3.25.76

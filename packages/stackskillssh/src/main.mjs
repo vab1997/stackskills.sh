@@ -1,4 +1,3 @@
-import "./config.mjs";
 import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -14,7 +13,7 @@ import {
   spinner,
 } from "@clack/prompts";
 import { AGENTS } from "./agents.mjs";
-import { identifyTechnologies } from "./identify-tech.mjs";
+import { identifyTechnologiesFromMap, searchCuratedSkills } from "./identify-tech-map.mjs";
 import { installAll } from "./install-skills.mjs";
 import { mergeDependencies } from "./merge-dependencies.mjs";
 import { searchSkillsForTechnologies } from "./search-skills.mjs";
@@ -48,21 +47,30 @@ async function main() {
 
   const packages = mergeDependencies(pkg.dependencies, pkg.devDependencies);
 
+  const technologies = identifyTechnologiesFromMap(packages);
+  log.step(`Detected ${technologies.length} technologies`);
+
+  note(technologies.join(", "), "Detected technologies");
+
   const s = spinner();
 
-  s.start("Detecting technologies in your stack...");
-  const technologies = await identifyTechnologies(packages);
-  s.stop(`Detected ${technologies.length} technologies`);
-  
-  log.info("technologies:", technologies);
-
   s.start("Fetching skills from skills.sh...");
-  const skillsByTech = await searchSkillsForTechnologies(technologies);
+  const [skillsByTech, curatedSkills] = await Promise.all([
+    searchSkillsForTechnologies(technologies),
+    searchCuratedSkills(packages),
+  ]);
   s.stop(`Found skills for ${skillsByTech.length} technologies`);
 
   const options = {};
   for (const { technology, skills } of skillsByTech) {
     options[technology] = skills.map((skill) => ({
+      value: skill,
+      label: skill.name,
+      hint: `${skill.installs.toLocaleString()} installs`,
+    }));
+  }
+  if (curatedSkills.length > 0) {
+    options["⭐ curated"] = curatedSkills.map((skill) => ({
       value: skill,
       label: skill.name,
       hint: `${skill.installs.toLocaleString()} installs`,

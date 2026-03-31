@@ -2,7 +2,7 @@
 
 CLI to discover and install AI agent skills for your tech stack.
 
-Reads your `package.json`, uses an LLM to identify the technologies in your stack, finds the most popular [skills.sh](https://skills.sh) skills for each technology, and installs them into your coding agent of choice — all in one interactive command.
+Reads your `package.json`, identifies the technologies in your stack, finds the most popular [skills.sh](https://skills.sh) skills for each technology, and installs them into your coding agent of choice — all in one interactive command.
 
 ## Usage
 
@@ -12,45 +12,49 @@ Run it from the root of any Node.js project:
 npx stackskillssh
 ```
 
-No global installation required.
-
-## Configuration
-
-The CLI requires a **Vercel AI Gateway** API key to call the LLM that identifies your technologies.
-
-```bash
-# Option 1 — .env file in the directory where you run the command
-AI_GATEWAY_API_KEY=your_key_here
-
-# Option 2 — system environment variable
-export AI_GATEWAY_API_KEY=your_key_here
-```
-
-If the key is missing, the CLI will exit immediately with a descriptive error before doing anything else.
+No global installation required. No API key needed.
 
 ## How it works
 
 ```
-package.json  →  LLM detection  →  skills.sh search  →  select  →  install
+package.json  →  map detection  →  skills.sh search  →  select  →  install
 ```
 
 1. **Reads your `package.json`** — extracts all keys from `dependencies` and `devDependencies`.
 
-2. **Identifies your stack** — sends the package list to an LLM that returns the stack-defining technologies. It understands semantic mappings: `next` → `nextjs`, `pg` → `postgres`, `@tanstack/react-query` → `react-query`, etc. Skips utilities, linters, and build tools.
+2. **Identifies your stack** — maps each package against a curated `PACKAGE_MAP` of ~80 npm packages → technology slugs. Instant and deterministic: no LLM, no network call. Handles semantic remappings: `next` → `nextjs`, `pg` → `postgres`, `@tanstack/react-query` → `react-query`, etc.
 
 3. **Searches skills.sh** — for each detected technology, fetches the top 5 skills from the [skills.sh](https://skills.sh) API, sorted by install count.
 
-4. **You select skills** — an interactive grouped multi-select lets you pick exactly which skills to install, organized by technology.
+4. **Shows curated skills** — a `⭐ curated` group always appears at the end of the selector with high-value skills regardless of your stack (see [Curated skills](#curated-skills)).
 
-5. **You select agents** — choose one or more coding agents to install to (Claude Code, Cursor, GitHub Copilot, and [30+ more](#supported-agents)).
+5. **You select skills** — an interactive grouped multi-select lets you pick exactly which skills to install, organized by technology.
 
-6. **Installs concurrently** — runs up to 3 installations in parallel with live animated spinners per skill. Each install runs:
+6. **You select agents** — choose one or more coding agents to install to (Claude Code, Cursor, GitHub Copilot, and [30+ more](#supported-agents)).
+
+7. **Installs concurrently** — runs up to 3 installations in parallel with live animated spinners per skill. Each install runs:
 
    ```
    npx -y skills add <repo> --skill <name> -a <agent> -y
    ```
 
-7. **Reports results** — each skill shows `✔` or `✘`, with a final count summary.
+8. **Reports results** — each skill shows `✔` or `✘`, with a final count summary.
+
+## Curated skills
+
+In addition to the skills found for your detected stack, the CLI always shows a `⭐ curated` group with high-value skills:
+
+| Skill | Condition | Source |
+|---|---|---|
+| `nextjs-caching` | `next` in deps | goncy/nextjs-skills |
+| `nextjs-rendering` | `next` in deps | goncy/nextjs-skills |
+| `nextjs-navigation` | `next` in deps | goncy/nextjs-skills |
+| `performance` | always | addyosmani/web-quality-skills |
+| `accessibility` | always | addyosmani/web-quality-skills |
+| `core-web-vitals` | always | addyosmani/web-quality-skills |
+| `best-practices` | always | addyosmani/web-quality-skills |
+
+Curated skills are fetched live from skills.sh so install counts are always fresh.
 
 ## Supported agents
 
@@ -71,26 +75,27 @@ package.json  →  LLM detection  →  skills.sh search  →  select  →  insta
 
 30+ agents total. Full list available in the [vercel-labs/skills](https://github.com/vercel-labs/skills#supported-agents) repository.
 
-## How the LLM detection works
+## How stack detection works
 
-The CLI uses [Vercel AI SDK v6](https://sdk.vercel.ai) with structured output (Zod schema) to extract technologies from your dependency list.
+The CLI uses a static `PACKAGE_MAP` — a curated `Map<npmPackage, slug>` covering the most common packages across:
 
-It rotates across **9 models** with automatic fallback if one fails:
+- **Frontend**: React, Next.js, Vue, Nuxt, Svelte, SvelteKit, Astro, Remix, Gatsby, Angular, Qwik, SolidJS
+- **Backend**: tRPC, NestJS, Express, Fastify, Hono, Koa, Elysia
+- **CMS**: Payload, Directus, Strapi, Sanity, Contentful, Keystatic, TinaCMS
+- **ORMs & databases**: Drizzle, Prisma, TypeORM, Sequelize, Mongoose, MikroORM, PostgreSQL, MySQL, SQLite, Redis
+- **UI libraries**: shadcn/ui, Mantine, Ant Design, Material UI, Chakra UI, DaisyUI, NextUI, HeroUI
+- **Auth**: Auth.js, Better Auth, Clerk, Passport, Lucia
+- **State**: Zustand, Jotai, Recoil, Valtio, Redux, MobX
+- **Data fetching**: React Query, SWR, Apollo, GraphQL
+- **Testing**: Vitest, Jest, Playwright, Cypress
+- **AI / LLM**: Vercel AI SDK, LangChain, OpenAI
+- **Language & styling**: TypeScript, Tailwind CSS, Zod
 
-- `mistral/ministral-3b`
-- `google/gemini-2.0-flash-lite`
-- `google/gemini-2.5-flash-lite`
-- `openai/gpt-4.1-nano`
-- `openai/gpt-4o-mini`
-- `openai/gpt-5-nano`
-- and more
-
-The prompt instructs the model to return only stack-defining technologies — frameworks, databases, ORMs, auth systems, UI libraries — and map npm package names to their community slugs. Generic utilities (`lodash`, `uuid`, `clsx`) and build tools (`eslint`, `vite`, `typescript`) are omitted.
+Deduplication is handled automatically — `react` + `react-dom` both map to `react` and only appear once.
 
 ## Requirements
 
 - Node.js 18+
-- `AI_GATEWAY_API_KEY` — Vercel AI Gateway key
 - A `package.json` in the current working directory
 
 ## Project structure
@@ -98,9 +103,9 @@ The prompt instructs the model to return only stack-defining technologies — fr
 ```
 src/
 ├── main.mjs                # CLI entrypoint — orchestrates the full flow
-├── config.mjs              # Env var validation with Zod (fails fast if missing)
 ├── merge-dependencies.mjs  # Merges deps + devDeps into a flat string[]
-├── identify-tech.mjs       # LLM tech detection with 9-model fallback
+├── identify-tech-map.mjs   # Static PACKAGE_MAP detection + curated skills
+├── identify-tech.mjs       # LLM-based tech detection (kept for reference)
 ├── search-skills.mjs       # skills.sh API client — top 5 skills per technology
 ├── agents.mjs              # Hardcoded list of 30+ supported agents
 ├── install-skills.mjs      # Concurrent installer with animated multi-line spinners

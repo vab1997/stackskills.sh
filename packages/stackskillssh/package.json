@@ -9,11 +9,12 @@
   "scripts": {
     "dev": "node src/main.mjs"
   },
-  "files": ["src"],
+  "files": [
+    "src"
+  ],
   "dependencies": {
     "@clack/prompts": "^1.1.0",
     "ai": "^6.0.116",
-    "dotenv": "^16.5.0",
     "zod": "^3.25.0"
   }
 }
