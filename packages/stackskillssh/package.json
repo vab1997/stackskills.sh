@@ -1,7 +1,7 @@
 {
   "name": "stackskillssh",
   "version": "0.1.0",
-  "description": "CLI to discover and install AI agent skills",
+  "description": "CLI to discover and install AI agent skills for your tech stack",
   "type": "module",
   "bin": {
     "stackskillssh": "./src/main.mjs"
@@ -10,11 +10,35 @@
     "dev": "node src/main.mjs"
   },
   "files": [
-    "src"
+    "src",
+    "README.md",
+    "LICENSE"
   ],
+  "keywords": [
+    "ai",
+    "agents",
+    "skills",
+    "cli",
+    "claude-code",
+    "cursor",
+    "copilot",
+    "windsurf",
+    "developer-tools"
+  ],
+  "author": "Victor Bejas",
+  "license": "MIT",
+  "homepage": "https://stackskills.sh/cli",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vab1997/stackskills.sh"
+  },
+  "bugs": {
+    "url": "https://github.com/vab1997/stackskills.sh/issues/new/choose"
+  },
+  "engines": {
+    "node": ">=18"
+  },
   "dependencies": {
-    "@clack/prompts": "^1.1.0",
-    "ai": "^6.0.116",
-    "zod": "^3.25.0"
+    "@clack/prompts": "^1.1.0"
   }
 }

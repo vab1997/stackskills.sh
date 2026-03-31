@@ -85,6 +85,7 @@ The CLI uses a static `PACKAGE_MAP` — a curated `Map<npmPackage, slug>` coveri
 - **ORMs & databases**: Drizzle, Prisma, TypeORM, Sequelize, Mongoose, MikroORM, PostgreSQL, MySQL, SQLite, Redis
 - **UI libraries**: shadcn/ui, Mantine, Ant Design, Material UI, Chakra UI, DaisyUI, NextUI, HeroUI
 - **Auth**: Auth.js, Better Auth, Clerk, Passport, Lucia
+- **Forms**: React Hook Form, TanStack Form, Formik, React Final Form, VeeValidate
 - **State**: Zustand, Jotai, Recoil, Valtio, Redux, MobX
 - **Data fetching**: React Query, SWR, Apollo, GraphQL
 - **Testing**: Vitest, Jest, Playwright, Cypress
@@ -114,4 +115,4 @@ src/
 
 ## License
 
-MIT
+MIT © 2026 [Victor Bejas](https://github.com/victorbejas)
