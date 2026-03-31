@@ -4,12 +4,12 @@ export function Footer() {
   return (
     <footer className="relative mx-auto flex max-w-6xl flex-col items-start justify-start gap-2 px-4 pb-10 md:flex-row md:items-center md:justify-between">
       <span className="text-muted-foreground/80 text-sm leading-snug uppercase">
-        (c) 2026 stackskills.sh all rights reserved.
+        (c) 2026 stackskills.sh
       </span>
 
       <div className="flex items-center gap-4">
         <a
-          href="https://github.com/vab1997/feedback-stackskills.sh/issues/new/choose"
+          href="https://github.com/vab1997/stackskills.sh/issues/new/choose"
           target="_blank"
           rel="noopener noreferrer"
           className="text-muted-foreground/80 hover:text-muted-foreground flex items-center gap-0.5 text-sm leading-snug uppercase transition-colors"

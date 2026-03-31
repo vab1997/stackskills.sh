@@ -81,6 +81,7 @@ const PACKAGE_MAP = new Map([
   ["@reduxjs/toolkit", "redux"],
   ["mobx", "mobx"],
   ["mobx-react-lite", "mobx"],
+  ["pinia", "pinia"],
 
   // — Data fetching —
   ["@tanstack/react-query", "react-query"],

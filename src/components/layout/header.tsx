@@ -1,7 +1,8 @@
+import { HeaderNavLink } from "@/components/layout/header-nav-link";
 import { links } from "@/lib/links";
 import Link from "next/link";
 
-export async function Header() {
+export function Header() {
   return (
     <header
       className="bg-background sticky top-0 z-50"
@@ -18,12 +19,7 @@ export async function Header() {
         </div>
 
         <div className="flex items-center gap-2 text-white">
-          <Link
-            href={links.home}
-            className="font-jersey-15 text-2xl font-medium tracking-tight uppercase"
-          >
-            [ try cli ]
-          </Link>
+          <HeaderNavLink />
         </div>
       </div>
     </header>

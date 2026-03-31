@@ -1,0 +1,10 @@
+blank_issues_enabled: false
+
+contact_links:
+  - name: 🌐 Visit StackSkills
+    url: https://stackskills.sh
+    about: Go to the main website
+
+  - name: 💬 General question or discussion
+    url: https://github.com/vab1997/stackskills-feedback/issues
+    about: Browse existing issues or start a discussion

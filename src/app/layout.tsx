@@ -1,3 +1,5 @@
+import { Footer } from "@/components/layout/footer";
+import { Header } from "@/components/layout/header";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { getBaseURL } from "@/lib/get-base-url";
 import { cn } from "@/lib/utils";
@@ -85,7 +87,9 @@ export default function RootLayout({
       <body
         className={`dark ${geistSans.variable} ${geistMono.variable} font-geist-sans antialiased`}
       >
+        <Header />
         <TooltipProvider>{children}</TooltipProvider>
+        <Footer />
         <Toaster theme="dark" />
         <script
           type="application/ld+json"
