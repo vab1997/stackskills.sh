@@ -1,10 +1,10 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SignInButton } from "@/features/auth/components/sign-in-button";
-import { SelectRepo } from "@/features/skills/components/select-repo";
+import { RepositoryPackageJsonSelector } from "@/features/skills/components/repository-package-json-selector";
 import { TextAreaInput } from "@/features/skills/components/text-area-input";
+import type { GithubRepo } from "@/features/skills/types";
 import { FileJson, GitBranch } from "lucide-react";
 import { toast } from "sonner";
-import { GithubRepo } from "../types";
 
 interface DependencyInputProps {
   onSubmit: ({
@@ -52,21 +52,21 @@ export function DependencyInput({
   };
 
   return (
-    <Tabs defaultValue="paste" className="w-full">
+    <Tabs defaultValue="repository" className="w-full">
       <TabsList className="bg-muted/50 w-full">
-        <TabsTrigger
-          value="paste"
-          className="text-muted-foreground flex-1 gap-2"
-        >
-          <FileJson className="size-3.5" />
-          Paste package.json
-        </TabsTrigger>
         <TabsTrigger
           value="repository"
           className="text-muted-foreground flex-1 gap-2"
         >
           <GitBranch className="size-3.5" />
           From repository
+        </TabsTrigger>
+        <TabsTrigger
+          value="paste"
+          className="text-muted-foreground flex-1 gap-2"
+        >
+          <FileJson className="size-3.5" />
+          Paste package.json
         </TabsTrigger>
       </TabsList>
 
@@ -86,7 +86,7 @@ export function DependencyInput({
             <SignInButton />
           </div>
         ) : (
-          <SelectRepo
+          <RepositoryPackageJsonSelector
             repositories={repositories}
             disabledButtonAnalyze={disabledButtonAnalyze}
             onSubmit={handleSelectedRepoSubmit}

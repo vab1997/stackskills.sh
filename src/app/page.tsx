@@ -1,7 +1,7 @@
 import { Hero } from "@/components/layout/hero";
 import { RepoExplorerSkeleton } from "@/components/skeletons/repo-explorer-skeleton";
 import { getSessionUser } from "@/features/auth/server";
-import { RepoExplorer } from "@/features/skills/components/repo-explorer";
+import { SkillsDiscoveryFlow } from "@/features/skills/components/skills-discovery-flow";
 import { getRepositories } from "@/features/skills/services/get-repositories";
 import { Suspense } from "react";
 
@@ -19,7 +19,7 @@ async function WrapperSection() {
 
   return (
     <section className="flex w-full flex-col items-center justify-center text-white">
-      <RepoExplorer user={session.user} repositories={repos} />
+      <SkillsDiscoveryFlow user={session.user} repositories={repos} />
     </section>
   );
 }

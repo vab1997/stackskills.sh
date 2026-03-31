@@ -1,6 +1,5 @@
 import { Loader } from "@/components/loader";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -8,20 +7,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { SignOutButton } from "@/features/auth/components/sign-out-button";
+import { ConnectedGithubAccount } from "@/features/auth/components/connected-github-account";
 import { useGetPackagejson } from "@/features/skills/hooks/use-get-package-json";
-import { Info, Package } from "lucide-react";
+import type { GithubRepo } from "@/features/skills/types";
+import { GitBranch, Package } from "lucide-react";
 import { useState } from "react";
 import ShikiHighlighter from "react-shiki";
 import { toast } from "sonner";
-import { GithubRepo } from "../types";
 
-export function SelectRepo({
+export function RepositoryPackageJsonSelector({
   repositories,
   disabledButtonAnalyze,
   onSubmit,
@@ -56,7 +50,7 @@ export function SelectRepo({
   return (
     <div className="flex flex-col gap-3">
       <label htmlFor="repo-select" className="text-muted-foreground text-sm">
-        GitHub repository URL
+        GitHub repository
       </label>
 
       {repositories && repositories.length === 0 ? (
@@ -65,30 +59,9 @@ export function SelectRepo({
           <span>No repositories found</span>
         </div>
       ) : (
-        <div className="flex flex-col gap-2">
-          <div className="flex w-full items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <Label
-                htmlFor="repo-select"
-                className="text-muted-foreground ml-0.5 flex items-center gap-1.5 text-sm"
-              >
-                Select a repository
-              </Label>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className="size-3.5 opacity-50" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  If you are working in a monorepo, switch to the
-                  &quot;Paste&quot; tab and paste the package.json files from
-                  each package so we can analyze them all together.
-                </TooltipContent>
-              </Tooltip>
-            </div>
-            <div>
-              <SignOutButton />
-            </div>
-          </div>
+        <div className="flex flex-col gap-4">
+          <ConnectedGithubAccount />
+
           <Select
             value={selectedRepo}
             onValueChange={handleSelectedRepo}
@@ -102,7 +75,8 @@ export function SelectRepo({
                 repositories.map((repo) => (
                   <SelectItem key={repo.id} value={repo.full_name}>
                     <span className="flex items-center gap-2">
-                      {repo.private ? "🔒" : "📂"} {repo.full_name}
+                      <GitBranch className="size-3.5" />
+                      {repo.full_name}
                     </span>
                   </SelectItem>
                 ))}

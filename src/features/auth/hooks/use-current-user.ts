@@ -1,4 +1,4 @@
-import { authClient } from "../client";
+import { authClient } from "@/features/auth/client";
 
 export function useCurrentUser() {
   const currentUser = authClient.useSession();

@@ -1,7 +1,7 @@
 "use server";
 
 import { getSessionUser } from "@/features/auth/server";
-import { getGithubToken } from "@/features/skills/services";
+import { getGithubToken } from "@/features/skills/services/get-github-token";
 import { GITHUB_API_URL } from "@/lib/constants";
 import { actionClient } from "@/lib/safe-action";
 import z from "zod";

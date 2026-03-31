@@ -1,6 +1,6 @@
 "use server";
 
-import { getGithubToken } from "@/features/skills/services";
+import { getGithubToken } from "@/features/skills/services/get-github-token";
 import type { GithubRepo } from "@/features/skills/types";
 import { CACHE_TAGS, GITHUB_API_URL } from "@/lib/constants";
 
