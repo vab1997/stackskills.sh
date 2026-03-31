@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import {
   cancel,
   groupMultiselect,
@@ -38,7 +39,7 @@ const { version } = JSON.parse(
 async function main() {
   console.log("\n" + LOGO_LINES.join("\n"));
   intro(
-    `stackskills.sh v${version} — Discover AI agent skills for your tech stack`,
+    `stackskills v${version} — Discover agent skills for your tech stack`,
   );
 
   const pkgPath = resolve(process.cwd(), "package.json");
