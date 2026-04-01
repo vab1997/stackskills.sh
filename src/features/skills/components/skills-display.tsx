@@ -1,16 +1,17 @@
+"use client";
+
 import { CommandBuilder } from "@/features/skills/components/command-builder";
 import { TechnologyRow } from "@/features/skills/components/technology-row";
 import type { SkillsByDependency } from "@/features/skills/types";
 import { Zap } from "lucide-react";
-import { AnimatePresence, useReducedMotion } from "motion/react";
-import { useCallback, useState } from "react";
+import { AnimatePresence } from "motion/react";
+import { useState } from "react";
 
 export function SkillDisplay({ skills }: { skills: SkillsByDependency }) {
   const [selectedSkills, setSelectedSkills] = useState<Set<string>>(new Set());
   const [selectedAgents, setSelectedAgents] = useState<Set<string>>(new Set());
-  const shouldReduceMotion = useReducedMotion() ?? false;
 
-  const handleToggleSkill = useCallback(({ command }: { command: string }) => {
+  function handleToggleSkill({ command }: { command: string }) {
     setSelectedSkills((prev) => {
       const next = new Set(prev);
       if (next.has(command)) {
@@ -20,29 +21,31 @@ export function SkillDisplay({ skills }: { skills: SkillsByDependency }) {
       }
       return next;
     });
-  }, []);
+  }
 
-  const handleClearAll = useCallback(() => setSelectedSkills(new Set()), []);
+  function handleClearAll() {
+    setSelectedSkills(new Set());
+  }
 
-  const handleRemoveSkill = useCallback(({ command }: { command: string }) => {
+  function handleRemoveSkill({ command }: { command: string }) {
     setSelectedSkills((prev) => {
       const next = new Set(prev);
       next.delete(command);
       return next;
     });
-  }, []);
+  }
 
-  const handleAddAgent = useCallback((value: string) => {
+  function handleAddAgent(value: string) {
     setSelectedAgents((prev) => new Set([...prev, value]));
-  }, []);
+  }
 
-  const handleRemoveAgent = useCallback((value: string) => {
+  function handleRemoveAgent(value: string) {
     setSelectedAgents((prev) => {
       const next = new Set(prev);
       next.delete(value);
       return next;
     });
-  }, []);
+  }
 
   return (
     <div className="mx-auto w-full">
@@ -85,7 +88,6 @@ export function SkillDisplay({ skills }: { skills: SkillsByDependency }) {
             selectedAgents={selectedAgents}
             onAddAgent={handleAddAgent}
             onRemoveAgent={handleRemoveAgent}
-            shouldReduceMotion={shouldReduceMotion}
           />
         )}
       </AnimatePresence>

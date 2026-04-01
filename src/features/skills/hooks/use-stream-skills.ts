@@ -4,7 +4,7 @@ import type {
   SkillsByDependency,
   SkillsStreamEvent,
 } from "@/features/skills/types";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export type StreamPhase =
   | "idle"
@@ -43,7 +43,7 @@ export function useStreamSkills() {
     };
   }, []);
 
-  const streamSkills = useCallback(async (packageJsons: string[]) => {
+  async function streamSkills(packageJsons: string[]) {
     abortRef.current?.abort();
     const controller = new AbortController();
     abortRef.current = controller;
@@ -117,13 +117,13 @@ export function useStreamSkills() {
       }));
       return "error";
     }
-  }, []);
+  }
 
-  const resetStream = useCallback(() => {
+  function resetStream() {
     abortRef.current?.abort();
     abortRef.current = null;
     setStreamState(INITIAL_STATE);
-  }, []);
+  }
 
   return { streamSkills, resetStream, streamState };
 }

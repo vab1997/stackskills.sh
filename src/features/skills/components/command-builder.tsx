@@ -1,3 +1,5 @@
+"use client";
+
 import { Badge } from "@/components/ui/badge";
 import {
   Select,
@@ -13,9 +15,9 @@ import type {
   SkillsByDependency,
 } from "@/features/skills/types";
 import { BadgeCheck, Bot, ListChecks, Terminal, X } from "lucide-react";
-import { motion } from "motion/react";
-import { memo, useMemo } from "react";
+import { motion, useReducedMotion } from "motion/react";
 
+// rendering-hoist-jsx: static badge list computed once at module load
 const universalAgentBadges = UNIVERSAL_AGENTS.map((agent) => (
   <Badge
     key={agent.value}
@@ -32,7 +34,7 @@ function getSkillNameFromCommand(command: string): string {
   return last.length === 0 ? command : last;
 }
 
-export const CommandBuilder = memo(function CommandBuilder({
+export function CommandBuilder({
   selectedSkills,
   allSkills,
   onClearAll,
@@ -40,7 +42,6 @@ export const CommandBuilder = memo(function CommandBuilder({
   selectedAgents,
   onAddAgent,
   onRemoveAgent,
-  shouldReduceMotion,
 }: {
   selectedSkills: Set<string>;
   allSkills: SkillsByDependency;
@@ -49,42 +50,37 @@ export const CommandBuilder = memo(function CommandBuilder({
   selectedAgents: Set<string>;
   onAddAgent: (value: string) => void;
   onRemoveAgent: (value: string) => void;
-  shouldReduceMotion: boolean;
 }) {
-  const selectedSkillsData = useMemo(() => {
-    const seen = new Set<string>();
-    const result: SkillsApiSkill[] = [];
-    for (const skills of Object.values(allSkills)) {
-      for (const skill of skills) {
-        if (selectedSkills.has(skill.command) && !seen.has(skill.command)) {
-          seen.add(skill.command);
-          result.push(skill);
-        }
+  const shouldReduceMotion = useReducedMotion() ?? false;
+
+  const seen = new Set<string>();
+  const selectedSkillsData: SkillsApiSkill[] = [];
+  for (const skills of Object.values(allSkills)) {
+    for (const skill of skills) {
+      if (selectedSkills.has(skill.command) && !seen.has(skill.command)) {
+        seen.add(skill.command);
+        selectedSkillsData.push(skill);
       }
     }
-    return result;
-  }, [selectedSkills, allSkills]);
+  }
 
-  const availableAgents = useMemo(
-    () => ADDITIONAL_AGENTS.filter((a) => !selectedAgents.has(a.value)),
-    [selectedAgents],
+  const availableAgents = ADDITIONAL_AGENTS.filter(
+    (a) => !selectedAgents.has(a.value),
+  );
+  const selectedAgentsData = ADDITIONAL_AGENTS.filter((a) =>
+    selectedAgents.has(a.value),
   );
 
-  const selectedAgentsData = useMemo(
-    () => ADDITIONAL_AGENTS.filter((a) => selectedAgents.has(a.value)),
-    [selectedAgents],
-  );
-
-  const combinedCommand = useMemo(() => {
-    if (selectedSkillsData.length === 0) return "";
-    const agentArgs = [...selectedAgents].flatMap((a) => ["-a", a]).join(" ");
-    return selectedSkillsData
-      .map((skill) => {
-        const withNpxY = skill.command.replace(/^npx\s/, "npx -y ");
-        return agentArgs ? `${withNpxY} ${agentArgs} -y` : `${withNpxY} -y`;
-      })
-      .join(" && ");
-  }, [selectedSkillsData, selectedAgents]);
+  const agentArgs = [...selectedAgents].flatMap((a) => ["-a", a]).join(" ");
+  const combinedCommand =
+    selectedSkillsData.length === 0
+      ? ""
+      : selectedSkillsData
+          .map((skill) => {
+            const withNpxY = skill.command.replace(/^npx\s/, "npx -y ");
+            return agentArgs ? `${withNpxY} ${agentArgs} -y` : `${withNpxY} -y`;
+          })
+          .join(" && ");
 
   return (
     <motion.div
@@ -210,4 +206,4 @@ export const CommandBuilder = memo(function CommandBuilder({
       </div>
     </motion.div>
   );
-});
+}
