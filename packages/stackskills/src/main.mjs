@@ -13,7 +13,7 @@ import {
 import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { AGENTS } from "./agents.mjs";
+import { ADDITIONAL_AGENTS, UNIVERSAL_AGENTS } from "./agents.mjs";
 import {
   identifyTechnologiesFromMap,
   searchCuratedSkills,
@@ -98,25 +98,32 @@ async function main() {
     `${selected.length} skill(s) selected`,
   );
 
-  const selectedAgents = await multiselect({
-    message: "Which agents do you want to install to?",
-    options: AGENTS,
+  note(
+    UNIVERSAL_AGENTS.map((a) => `• ${a.label}`).join("\n"),
+    "Universal (.agents/skills) — always included",
+  );
+
+  const selectedAdditional = await multiselect({
+    message: "Additional agents (optional):",
+    options: ADDITIONAL_AGENTS,
   });
 
-  if (isCancel(selectedAgents) || selectedAgents.length === 0) {
-    cancel("No agents selected.");
+  if (isCancel(selectedAdditional)) {
+    cancel("Cancelled.");
     process.exit(0);
   }
 
+  const allAgents = [
+    ...UNIVERSAL_AGENTS.map((a) => a.value),
+    ...selectedAdditional.map((a) => a.value),
+  ];
+
   log.step(
-    `Installing ${selected.length} skill(s) to ${selectedAgents.length} agent(s)...`,
+    `Installing ${selected.length} skill(s) to ${allAgents.length} agent(s)...`,
   );
   console.log("");
 
-  const { installed, failed, errors } = await installAll(
-    selected,
-    selectedAgents,
-  );
+  const { installed, failed, errors } = await installAll(selected, allAgents);
 
   console.log("");
 
