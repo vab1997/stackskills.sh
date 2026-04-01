@@ -1,4 +1,4 @@
-import { AnimatedShinyText } from "../ui/animated-shiny-text";
+import { AnimatedShinyText } from "@/components/ui/animated-shiny-text";
 
 export function Hero() {
   return (
@@ -30,9 +30,8 @@ export function Hero() {
 
       <div>
         <p className="text-muted-foreground font-geist-sans mt-2 text-center text-xl leading-tight tracking-tight text-pretty sm:text-2xl lg:text-left lg:text-3xl">
-          Paste your package.json — StackSkills instantly maps your dependencies
-          to the best agent skills from skills.sh matched to your exact tech
-          stack.
+          StackSkills maps your dependencies to the best agent skills from
+          skills.sh matched to your exact tech stack.
         </p>
       </div>
     </div>

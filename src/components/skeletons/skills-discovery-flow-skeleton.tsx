@@ -60,7 +60,7 @@ function SectionSkeleton({
   );
 }
 
-export function RepoExplorerSkeleton() {
+export function SkillsDiscoveryFlowSkeleton() {
   return (
     <section className="flex w-full flex-col items-center justify-center text-white">
       <div className="my-8 flex w-full flex-1 flex-col gap-8">

@@ -1,5 +1,5 @@
 import { Hero } from "@/components/layout/hero";
-import { RepoExplorerSkeleton } from "@/components/skeletons/repo-explorer-skeleton";
+import { SkillsDiscoveryFlowSkeleton } from "@/components/skeletons/skills-discovery-flow-skeleton";
 import { getSessionUser } from "@/features/auth/server";
 import { SkillsDiscoveryFlow } from "@/features/skills/components/skills-discovery-flow";
 import { getRepositories } from "@/features/skills/services/get-repositories";
@@ -28,7 +28,7 @@ export default function Home() {
   return (
     <main className="relative mx-auto flex max-w-6xl flex-col items-center justify-center px-4 pb-30">
       <Hero />
-      <Suspense fallback={<RepoExplorerSkeleton />}>
+      <Suspense fallback={<SkillsDiscoveryFlowSkeleton />}>
         <WrapperSection />
       </Suspense>
     </main>
