@@ -3,6 +3,7 @@ import { Header } from "@/components/layout/header";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { getBaseURL } from "@/lib/get-base-url";
 import { cn } from "@/lib/utils";
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import {
   Geist,
@@ -91,6 +92,7 @@ export default function RootLayout({
         <TooltipProvider>{children}</TooltipProvider>
         <Footer />
         <Toaster theme="dark" />
+        <Analytics />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
