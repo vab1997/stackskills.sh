@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { FileJson, Plus, X } from "lucide-react";
-import { Fragment, useState } from "react";
+import { Fragment, useId, useRef, useState } from "react";
 import z from "zod";
 
 const depsSchema = z.record(z.string(), z.string());
@@ -37,7 +37,10 @@ function validatePackageJson(content: string): string | null {
   }
 }
 
-const generateId = () => crypto.randomUUID();
+type PackageJsonEntry = { id: string; value: string };
+
+const getTextareaId = (entryId: string) => `paste-package-json-${entryId}`;
+const getErrorId = (entryId: string) => `error-${entryId}`;
 
 export function TextAreaInput({
   disabledButtonAnalyze,
@@ -50,13 +53,17 @@ export function TextAreaInput({
     packageJsonFromPaste: string[];
   }) => void;
 }) {
-  const [entries, setEntries] = useState<{ id: string; value: string }[]>([
-    { id: generateId(), value: "" },
+  const baseId = useId();
+  const nextEntryIndexRef = useRef(1);
+  const [entries, setEntries] = useState<PackageJsonEntry[]>(() => [
+    { id: `${baseId}-0`, value: "" },
   ]);
   const [errors, setErrors] = useState<Record<string, string | null>>({});
+  const firstTextareaId = entries[0] ? getTextareaId(entries[0].id) : undefined;
 
   const addPackageJson = () => {
-    const id = generateId();
+    const id = `${baseId}-${nextEntryIndexRef.current}`;
+    nextEntryIndexRef.current += 1;
     setEntries((prev) => [...prev, { id, value: "" }]);
   };
 
@@ -95,7 +102,7 @@ export function TextAreaInput({
     <div className="flex flex-col gap-3">
       <header className="flex items-center justify-between">
         <label
-          htmlFor="paste-package-json-0"
+          htmlFor={firstTextareaId}
           className="text-muted-foreground text-sm"
         >
           Paste your package.json contents (max 4)
@@ -129,6 +136,7 @@ export function TextAreaInput({
                 </span>
                 {entries.length > 1 && (
                   <button
+                    type="button"
                     onClick={() => removePackageJson(entry.id)}
                     className="text-muted-foreground hover:bg-destructive/15 hover:text-destructive -mr-1 flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs transition ease-in-out active:scale-[0.97]"
                     aria-label="Remove this package.json"
@@ -140,7 +148,7 @@ export function TextAreaInput({
               </div>
 
               <Textarea
-                id={`paste-package-json-${entry.id}`}
+                id={getTextareaId(entry.id)}
                 placeholder='{"dependencies": { "react": "^18.0.0", ... }}'
                 value={entry.value}
                 onChange={(e) => updatePackageJson(entry.id, e.target.value)}
@@ -148,14 +156,14 @@ export function TextAreaInput({
                 disabled={disabledButtonAnalyze}
                 aria-invalid={!!errors[entry.id]}
                 aria-describedby={
-                  errors[entry.id] ? `error-${entry.id}` : undefined
+                  errors[entry.id] ? getErrorId(entry.id) : undefined
                 }
                 className="styled-scrollbar max-h-56 min-h-28 overflow-y-auto rounded-t-none border-none font-mono text-sm focus-visible:ring-0"
               />
             </div>
 
             {errors[entry.id] && (
-              <p id={`error-${entry.id}`} className="text-destructive text-xs">
+              <p id={getErrorId(entry.id)} className="text-destructive text-xs">
                 {errors[entry.id]}
               </p>
             )}

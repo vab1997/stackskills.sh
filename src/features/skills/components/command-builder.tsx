@@ -1,5 +1,3 @@
-"use client";
-
 import { Badge } from "@/components/ui/badge";
 import {
   Select,
@@ -8,12 +6,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ADDITIONAL_AGENTS, UNIVERSAL_AGENTS } from "@/features/skills/agents";
 import { CopyButton } from "@/features/skills/components/copy-button";
 import type {
   SkillsApiSkill,
   SkillsByDependency,
 } from "@/features/skills/types";
+import {
+  ADDITIONAL_AGENTS,
+  UNIVERSAL_AGENTS,
+} from "@/features/skills/utils/agents";
 import { BadgeCheck, Bot, ListChecks, Terminal, X } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 
