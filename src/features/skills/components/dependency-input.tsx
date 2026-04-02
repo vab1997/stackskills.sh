@@ -7,13 +7,7 @@ import { FileJson, GitBranch } from "lucide-react";
 import { toast } from "sonner";
 
 interface DependencyInputProps {
-  onSubmit: ({
-    packageJsonFromRepository,
-    packageJsonFromPaste,
-  }: {
-    packageJsonFromRepository?: string;
-    packageJsonFromPaste?: string[];
-  }) => void;
+  onDependenciesSubmit: ({ packageJsons }: { packageJsons: string[] }) => void;
   disabledButtonAnalyze: boolean;
   disableRepositoryTab: boolean;
   repositories?: GithubRepo[] | null;
@@ -21,7 +15,7 @@ interface DependencyInputProps {
 
 export function DependencyInput({
   repositories,
-  onSubmit,
+  onDependenciesSubmit,
   disabledButtonAnalyze,
   disableRepositoryTab,
 }: DependencyInputProps) {
@@ -36,8 +30,8 @@ export function DependencyInput({
       });
       return;
     }
-    onSubmit({
-      packageJsonFromRepository: packageJson,
+    onDependenciesSubmit({
+      packageJsons: [packageJson],
     });
   };
 
@@ -46,27 +40,27 @@ export function DependencyInput({
   }: {
     packageJsonFromPaste: string[];
   }) => {
-    onSubmit({
-      packageJsonFromPaste,
+    onDependenciesSubmit({
+      packageJsons: packageJsonFromPaste,
     });
   };
 
   return (
-    <Tabs defaultValue="repository" className="w-full">
+    <Tabs defaultValue="paste" className="w-full">
       <TabsList className="bg-muted/50 w-full">
-        <TabsTrigger
-          value="repository"
-          className="text-muted-foreground flex-1 gap-2"
-        >
-          <GitBranch className="size-3.5" />
-          From repository
-        </TabsTrigger>
         <TabsTrigger
           value="paste"
           className="text-muted-foreground flex-1 gap-2"
         >
           <FileJson className="size-3.5" />
           Paste package.json
+        </TabsTrigger>
+        <TabsTrigger
+          value="repository"
+          className="text-muted-foreground flex-1 gap-2"
+        >
+          <GitBranch className="size-3.5" />
+          From repository
         </TabsTrigger>
       </TabsList>
 

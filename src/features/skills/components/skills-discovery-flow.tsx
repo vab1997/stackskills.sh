@@ -6,9 +6,20 @@ import { DependencyInput } from "@/features/skills/components/dependency-input";
 import { DiscoveryStepPanel } from "@/features/skills/components/discovery-step-panel";
 import { SkillDisplay } from "@/features/skills/components/skills-display";
 import { Stepper } from "@/features/skills/components/stepper";
-import type { StreamPhase } from "@/features/skills/hooks/use-stream-skills";
-import { useStreamSkills } from "@/features/skills/hooks/use-stream-skills";
-import type { GithubRepo } from "@/features/skills/types";
+import { useFetchSkills } from "@/features/skills/hooks/use-fetch-skills";
+import { useIdentifyTech } from "@/features/skills/hooks/use-identify-tech";
+import type { AnalysisState, GithubRepo } from "@/features/skills/types";
+import {
+  getAnalysisErrorMessage,
+  getCompletedState,
+  getEmptyDependenciesState,
+  getErrorState,
+  getFetchingState,
+  getNoTechnologiesState,
+  getSkillsSummary,
+  hasDependencies,
+  INITIAL_ANALYSIS_STATE,
+} from "@/features/skills/utils/analysis-state";
 import { User } from "better-auth/types";
 import { Package, RotateCcw, Search, Sparkles, Zap } from "lucide-react";
 import { useRef, useState } from "react";
@@ -20,44 +31,6 @@ const STEPS = [
   { label: "Skills", description: "Relevant skills" },
 ];
 
-interface DependenciesSubmitPayload {
-  packageJsonFromRepository?: string;
-  packageJsonFromPaste?: string[];
-}
-
-const getPackageJsons = ({
-  packageJsonFromRepository,
-  packageJsonFromPaste,
-}: DependenciesSubmitPayload) => {
-  if (packageJsonFromRepository) {
-    return [packageJsonFromRepository];
-  }
-
-  return packageJsonFromPaste ?? [];
-};
-
-const getSkillsSummary = (
-  skills: ReturnType<typeof useStreamSkills>["streamState"]["skills"],
-) => {
-  const skillsByDependency = skills ?? {};
-  const technologyCount = Object.keys(skillsByDependency).length;
-  const totalSkills = Object.values(skillsByDependency).reduce(
-    (acc, value) => acc + value.length,
-    0,
-  );
-
-  const subtitle =
-    technologyCount > 0
-      ? `${technologyCount} technologies, ${totalSkills} skills found`
-      : "Skills will appear after analysis";
-
-  return {
-    skillsByDependency,
-    technologyCount,
-    subtitle,
-  };
-};
-
 export function SkillsDiscoveryFlow({
   user,
   repositories,
@@ -68,48 +41,81 @@ export function SkillsDiscoveryFlow({
   const [currentStep, setCurrentStep] = useState(0);
   const [lastPackageJsons, setLastPackageJsons] = useState<string[]>([]);
   const [resetKey, setResetKey] = useState(0);
-  const { streamSkills, resetStream, streamState } = useStreamSkills();
+  const [analysisState, setAnalysisState] = useState<AnalysisState>(
+    INITIAL_ANALYSIS_STATE,
+  );
+  const { identifyTech } = useIdentifyTech();
+  const { fetchSkills } = useFetchSkills();
   const latestRequestRef = useRef(0);
 
-  const handleReset = () => {
-    latestRequestRef.current += 1;
-    setCurrentStep(0);
-    setLastPackageJsons([]);
-    resetStream();
-    setResetKey((k) => k + 1);
+  const isStaleRequest = (requestId: number) => {
+    return requestId !== latestRequestRef.current;
   };
 
-  const syncStepWithPhase = (phase: StreamPhase) => {
-    if (phase === "complete") {
-      setCurrentStep(2);
-      return;
-    }
-
-    if (phase === "idle") {
-      setCurrentStep(0);
-      return;
-    }
-
-    setCurrentStep(1);
-  };
-
-  const startAnalysis = async (packageJsons: string[]) => {
-    if (packageJsons.length === 0) {
-      return;
-    }
-
+  const beginAnalysis = (packageJsons: string[]) => {
     latestRequestRef.current += 1;
     const requestId = latestRequestRef.current;
 
     setLastPackageJsons(packageJsons);
     setCurrentStep(1);
+    setAnalysisState({ ...INITIAL_ANALYSIS_STATE, phase: "identifying" });
 
-    const finalPhase = await streamSkills(packageJsons);
-    if (requestId !== latestRequestRef.current) {
+    return requestId;
+  };
+
+  const resolveTechnologies = (packageJsons: string[]) => {
+    return identifyTech({ packageJsons });
+  };
+
+  const resolveSkills = async (technologies: string[]) => {
+    const result = await fetchSkills({ technologies });
+
+    if (!result?.data) {
+      throw new Error("Failed to fetch skills");
+    }
+
+    return result.data.skills;
+  };
+
+  const handleReset = () => {
+    latestRequestRef.current += 1;
+    setCurrentStep(0);
+    setLastPackageJsons([]);
+    setAnalysisState(INITIAL_ANALYSIS_STATE);
+    setResetKey((k) => k + 1);
+  };
+
+  const startAnalysis = async (packageJsons: string[]) => {
+    const requestId = beginAnalysis(packageJsons);
+
+    if (!hasDependencies(packageJsons)) {
+      if (isStaleRequest(requestId)) return;
+      setAnalysisState(getEmptyDependenciesState());
       return;
     }
 
-    syncStepWithPhase(finalPhase);
+    const technologies = resolveTechnologies(packageJsons);
+    if (isStaleRequest(requestId)) return;
+
+    if (technologies.length === 0) {
+      setAnalysisState(getNoTechnologiesState());
+      return;
+    }
+
+    setAnalysisState(getFetchingState(technologies));
+
+    try {
+      const skills = await resolveSkills(technologies);
+      if (isStaleRequest(requestId)) return;
+
+      setAnalysisState(getCompletedState(technologies, skills));
+      if (Object.keys(skills).length > 0) setCurrentStep(2);
+    } catch (err) {
+      if (isStaleRequest(requestId)) return;
+      setAnalysisState(
+        getErrorState(technologies, getAnalysisErrorMessage(err)),
+      );
+    }
   };
 
   const handleRetry = async () => {
@@ -122,14 +128,10 @@ export function SkillsDiscoveryFlow({
   };
 
   const handleDependenciesSubmit = async ({
-    packageJsonFromRepository,
-    packageJsonFromPaste,
-  }: DependenciesSubmitPayload) => {
-    const packageJsons = getPackageJsons({
-      packageJsonFromRepository,
-      packageJsonFromPaste,
-    });
-
+    packageJsons,
+  }: {
+    packageJsons: string[];
+  }) => {
     if (packageJsons.length === 0) {
       toast.error("No package.json provided", {
         description: "Please provide a package.json",
@@ -141,7 +143,7 @@ export function SkillsDiscoveryFlow({
   };
 
   const { skillsByDependency, technologyCount, subtitle } = getSkillsSummary(
-    streamState.skills,
+    analysisState.skills,
   );
 
   return (
@@ -159,7 +161,7 @@ export function SkillsDiscoveryFlow({
       >
         <DependencyInput
           key={resetKey}
-          onSubmit={handleDependenciesSubmit}
+          onDependenciesSubmit={handleDependenciesSubmit}
           disabledButtonAnalyze={currentStep > 0}
           disableRepositoryTab={!user}
           repositories={repositories}
@@ -174,7 +176,7 @@ export function SkillsDiscoveryFlow({
         currentStep={currentStep}
       >
         <AnalysisSectionBody
-          streamState={streamState}
+          analysisState={analysisState}
           onRetry={handleRetry}
           onReset={handleReset}
         />

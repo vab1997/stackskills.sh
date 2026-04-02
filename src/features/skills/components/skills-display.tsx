@@ -1,5 +1,3 @@
-"use client";
-
 import { CommandBuilder } from "@/features/skills/components/command-builder";
 import { TechnologyRow } from "@/features/skills/components/technology-row";
 import type { SkillsByDependency } from "@/features/skills/types";

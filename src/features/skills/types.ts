@@ -19,15 +19,18 @@ export interface SkillsApiSkill {
 
 export type SkillsByDependency = Record<string, SkillsApiSkill[]>;
 
-export type SkillsStreamEvent =
-  | { type: "detecting" }
-  | { type: "technologies_found"; technologies: string[] }
-  | { type: "fetching_skills"; total: number }
-  | {
-      type: "skill_fetched";
-      technology: string;
-      fetched: number;
-      total: number;
-    }
-  | { type: "complete"; skills: SkillsByDependency }
-  | { type: "error"; message: string };
+export type AnalysisPhase =
+  | "idle"
+  | "identifying"
+  | "fetching"
+  | "complete"
+  | "empty_dependencies"
+  | "no_technologies"
+  | "error";
+
+export interface AnalysisState {
+  phase: AnalysisPhase;
+  technologies: string[];
+  skills: SkillsByDependency | null;
+  errorMessage: string | null;
+}
