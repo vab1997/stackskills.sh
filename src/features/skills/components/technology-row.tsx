@@ -19,6 +19,7 @@ import {
   ChevronDown,
   ExternalLink,
   Package,
+  Sparkles,
 } from "lucide-react";
 
 function SkillItem({
@@ -110,13 +111,19 @@ export function TechnologyRow({
     selectedSkills.has(s.command),
   ).length;
 
+  const isCurated = name === "curated";
+
   return (
     <Collapsible className="group/collapsible bg-background">
       <CollapsibleTrigger className="hover:bg-muted/60 data-[state=open]:bg-muted/40 flex w-full cursor-pointer items-center gap-3 px-4 py-3 text-left transition-colors duration-150">
         <div className="flex items-center gap-3">
-          <Package className="text-muted-foreground size-4" />
+          {isCurated ? (
+            <Sparkles className="text-muted-foreground size-4" />
+          ) : (
+            <Package className="text-muted-foreground size-4" />
+          )}
           <span className="text-foreground font-mono text-sm font-medium">
-            {name}
+            {isCurated ? "Bonus skills" : name}
           </span>
         </div>
         <Badge

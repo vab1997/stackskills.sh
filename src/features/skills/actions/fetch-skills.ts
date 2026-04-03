@@ -4,7 +4,10 @@ import type { SkillsByDependency } from "@/features/skills/types";
 import { logger } from "@/lib/logger";
 import { actionClient } from "@/lib/safe-action";
 import z from "zod";
-import { searchSkillsByDependency } from "../services/search-skills";
+import {
+  fetchCuratedSkills,
+  searchSkillsByDependency,
+} from "../services/search-skills";
 
 const inputSchema = z.object({
   technologies: z.array(z.string()).min(1),
@@ -16,15 +19,18 @@ export const fetchSkillsAction = actionClient
     const { technologies } = parsedInput;
 
     try {
-      const results = await Promise.all(
-        technologies.map(async (technology) => {
-          try {
-            return await searchSkillsByDependency(technology);
-          } catch {
-            return { dependency: technology, skills: [] };
-          }
-        }),
-      );
+      const [results, curatedSkills] = await Promise.all([
+        Promise.all(
+          technologies.map(async (technology) => {
+            try {
+              return await searchSkillsByDependency(technology);
+            } catch {
+              return { dependency: technology, skills: [] };
+            }
+          }),
+        ),
+        fetchCuratedSkills(technologies),
+      ]);
 
       const skills = results.reduce<SkillsByDependency>(
         (acc, { dependency, skills }) => {
@@ -33,6 +39,10 @@ export const fetchSkillsAction = actionClient
         },
         {},
       );
+
+      if (curatedSkills.length > 0) {
+        skills["curated"] = curatedSkills;
+      }
 
       return { skills };
     } catch (error) {
